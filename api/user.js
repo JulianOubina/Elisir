@@ -89,23 +89,27 @@ router.post('/login',(req,res)=>{
     password = password.trim();
     User.find({email})
     .then(data =>{
-        if(data){
+        if(data[0]){
             const hashedPassword = data[0].password;
             bcrypt.compare(password,hashedPassword).then(result=>{
                 if(result){
                     //acceso
-
+                    console.log('exito')   
 
                 }
                 else{
                     //contraseña incorrecta render
-
+                    console.log('contrasenia incorrecta');
                 }
 
             })
 
 
+        }else{
+            console.log('no existe usuario');
         }
+    }).catch(err =>{
+        console.log(err)
     })
 })
 
