@@ -50,16 +50,20 @@ function SignUpPage() {
         <Grid item xs={12}>
           <TextField
             className={classes.textField}
-            label="Número de Teléfono"
+            label="Contraseña"
+            type="password"
             variant="outlined"
           />
         </Grid>
         <Grid item xs={12}>
           <TextField
             className={classes.textField}
-            label="Contraseña"
-            type="password"
+            label="Fecha de nacimiento"
+            type="date"
             variant="outlined"
+            InputLabelProps={{
+              shrink: true,
+            }}
           />
         </Grid>
       </Grid>

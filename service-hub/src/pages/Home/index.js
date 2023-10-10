@@ -9,81 +9,19 @@ import {
   Grid,
   Rating,
 } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
 import { useNavigate } from 'react-router-dom';
+import useStyles from '../../styles/styles';
 import mockServices from '../../data/mockServices';
 import mockComments from '../../data/mockComments';
 import ServiceDetails from '../ServiceExplorer/ServiceDetails';
 
-import service1Image from '../../assets/Logos/matematica.jpg';
-import service2Image from '../../assets/Logos/fisica.jpg';
-import service3Image from '../../assets/Logos/quimica.jpg';
+import vino1Image from '../../assets/Logos/Vinos/VinoTinto.png';
+import vino2Image from '../../assets/Logos/Vinos/VinoBlanco.png';
+import vino3Image from '../../assets/Logos/Vinos/VinoRosado.png';
 
 import ContratacionForm from '../ServiceExplorer/ContratacionForm';
 import NotificationRed from '../../components/ui/NotificationRed';
 import NotificationGreen from '../../components/ui/NotificationGreen';
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-    backgroundColor: '#C0A1AE', // Fondo oscuro
-  },
-  mainContent: {
-    padding: theme.spacing(5),
-    textAlign: 'center',
-    backgroundColor: '#976278', // Fondo de las secciones
-    color: 'white', // Color de los textos
-    fontFamily: 'Roboto, sans-serif', // Fuente para contenido principal
-  },
-  footer: {
-    marginTop: theme.spacing(5),
-    padding: theme.spacing(3),
-    backgroundColor: '#370318', // Fondo del footer
-    color: 'white', // Color del texto del footer
-    fontFamily: 'Roboto, sans-serif', // Fuente para el footer
-  },
-  media: {
-    height: 140,
-  },
-  card: {
-    maxWidth: 345,
-    transition: 'transform 0.2s',
-    '&:hover': {
-      transform: 'scale(1.05)',
-      cursor: 'pointer',
-    },
-    backgroundColor: '#EAE0E4',
-  },
-  section: {
-    margin: theme.spacing(2, 2),
-    padding: theme.spacing(5, 0),
-    borderBottom: '2px solid #e0e0e0',
-  },
-  mainTitle: {
-    fontSize: '2.5rem',
-    fontWeight: 'bold',
-    color: '#EAEAEA',
-    marginBottom: theme.spacing(2),
-    borderBottom: '5px solid #e0e0e0',
-    display: 'inline-block',
-  },
-  subTitle: {
-    fontSize: '2rem',
-    fontStyle: 'italic',
-    color: '#EAEAEA',
-    marginTop: theme.spacing(1),
-  },
-  rubyColor: {
-    color: '#9B111E', // Rojo rubí
-  },
-  rubyButton: {
-    backgroundColor: '#9B111E', // Rojo rubí
-    color: 'white',
-    '&:hover': {
-      backgroundColor: '#7A0C1A', // Un tono más oscuro de rojo rubí para el hover
-    },
-  },
-}));
 
 function LandingPage() {
   const classes = useStyles();
@@ -110,7 +48,7 @@ function LandingPage() {
 
   const navigate = useNavigate();
 
-  const serviceImages = [service1Image, service2Image, service3Image];
+  const serviceImages = [vino1Image, vino2Image, vino3Image];
 
   // Estado para controlar el diálogo de contratación
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -219,21 +157,45 @@ function LandingPage() {
 
   return (
     <div className={classes.root}>
-      <Container className={classes.mainContent}>
+      <Container className={classes.mainContentCenter}>
         <div className={classes.mainTitle}>
-          <Typography variant="h5" paragraph style={{ color: '#EAEAEA' }}>
-            Bienvenido a Elisir, tu puerta de entrada a un mundo de sabores y
-            experiencias vinícolas
-          </Typography>
-          <Typography variant="h3" gutterBottom className={classes.subTitle}>
-            Uno se Toma, el Otro se Saborea
+          <Typography
+            variant="h5"
+            paragraph
+            style={{
+              color: 'black',
+              fontFamily: 'Merriweather, Georgia, serif',
+              fontStyle: 'italic',
+            }}
+            align="left"
+          >
+            {' '}
+            De lo esencial de la naturaleza, a la singularidad
+            <br />
+            de lo excepcional
           </Typography>
         </div>
+
+        {/* Aquí se agregan las líneas que proporcionaste */}
+        <Typography
+          variant="h5"
+          gutterBottom
+          align="left"
+          className={classes.sectionTitle}
+        >
+          Entérate de las tendencias de las industrias, las novedades y lo que
+          se viene
+        </Typography>
+        <Typography variant="body1" paragraph align="left" color="white">
+          Conoce el presente de la vitivinicultura argentina y entérate de todo
+          lo que tienes que saber acerca de los vinos
+        </Typography>
+
         <div className={classes.section}>
-          <Grid container spacing={5}>
+          <Grid container spacing={5} className={classes.cardContainer}>
             {features.map((feature) => (
               <Grid item xs={12} sm={6} md={3} key={feature.title}>
-                <Card className={classes.card}>
+                <Card className={classes.cardFuncionalidades}>
                   <CardContent>
                     <Typography variant="h6" component="div">
                       {feature.title}
@@ -253,7 +215,7 @@ function LandingPage() {
             gutterBottom
             className={classes.sectionTitle}
           >
-            Echa un vistazo a algunos de nuestros vinos más populares
+            Echa un vistazo a algunos de los vinos más populares
           </Typography>
           <Grid container spacing={3}>
             {mockServices.slice(0, 3).map((service, index) => (

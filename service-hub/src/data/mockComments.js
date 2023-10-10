@@ -2,7 +2,7 @@ const mockComments = [
   {
     id: 1,
     user: 'Alejandro García Pérez',
-    serviceName: 'Clase de Matemáticas',
+    serviceName: 'Vino Tinto',
     comment: '¡Impresionante ponencia!',
     secondaryComment: 'La explicación del profesor fue clara y concisa.',
     rating: 5,
@@ -10,7 +10,7 @@ const mockComments = [
   {
     id: 2,
     user: 'Emma Smith Johnson',
-    serviceName: 'Clase de Matemáticas',
+    serviceName: 'Vino Blanco',
     comment: 'Muy enriquecedor.',
     secondaryComment: 'Aprendí mucho en la charla de hoy.',
     rating: 4,
@@ -18,10 +18,10 @@ const mockComments = [
   {
     id: 3,
     user: 'Maria Rossi Bianchi',
-    serviceName: 'Clase de Física',
+    serviceName: 'Vino Rosado',
     comment: '¡Gran contenido!',
     secondaryComment: 'La lección sobre historia fue fascinante.',
-    rating: 5,
+    rating: 3,
   },
   {
     id: 4,

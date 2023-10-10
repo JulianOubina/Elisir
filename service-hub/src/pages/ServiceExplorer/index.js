@@ -88,6 +88,12 @@ function ServiceExplorer() {
     return options;
   };
 
+  // Variable para la barra de busqueda
+  const [searchValue, setSearchValue] = useState('');
+  const handleSearchChange = (event) => {
+    setSearchValue(event.target.value);
+  };
+
   // Función para validar que la hora de finalización sea mayor que la hora de inicio y otras validaciones
   const CheckTime = () => {
     if (!isValidPhoneNumber(telefono)) {
@@ -124,6 +130,7 @@ function ServiceExplorer() {
   const filtrarServicios = () => {
     const filtrados = servicios.filter((servicio) => {
       return (
+        (!searchValue || servicio.nombre.includes(searchValue)) &&
         (!categoriaFiltro || servicio.categoria === categoriaFiltro) &&
         (!tipoFiltro || servicio.tipo === tipoFiltro) &&
         (!frecuenciaFiltro || servicio.frecuencia === frecuenciaFiltro)
@@ -142,10 +149,23 @@ function ServiceExplorer() {
 
   return (
     <div>
-      <Container className={classes.root}>
-        <Typography variant="h4" gutterBottom>
+      <Container className={classes.mainContentLeft}>
+        <Typography variant="h4" gutterBottom color>
           Explorar Vinos
         </Typography>
+        <form>
+          <div>
+            <input
+              type="search"
+              className="form-control mb-3"
+              placeholder="Buscar vinos..."
+              value={searchValue}
+              onChange={handleSearchChange}
+            />
+            <Button>Buscar</Button>
+          </div>
+        </form>
+
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <DynamicSelect
@@ -187,20 +207,10 @@ function ServiceExplorer() {
             />
           </Grid>
         </Grid>
-        <Button
-          variant="contained"
-          color="primary"
-          className={classes.button}
-          onClick={filtrarServicios}
-        >
+        <Button className={classes.rubyButton} onClick={filtrarServicios}>
           Filtrar
         </Button>
-        <Button
-          variant="outlined"
-          color="secondary"
-          className={classes.button}
-          onClick={limpiarFiltros}
-        >
+        <Button className={classes.outlinedRubyButton} onClick={limpiarFiltros}>
           Limpiar Filtros
         </Button>
         <Grid container spacing={3}>

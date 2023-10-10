@@ -18,7 +18,7 @@ import {
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import CategoryIcon from '@mui/icons-material/Category';
 import ScheduleIcon from '@mui/icons-material/Schedule';
-import TimerIcon from '@mui/icons-material/Timer';
+import LiquorIcon from '@mui/icons-material/Liquor';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import ClassIcon from '@mui/icons-material/Class';
 import useStyles from '../../styles/styles';
@@ -62,17 +62,14 @@ function ServiceDetails({ service, onClose, onHire }) {
             <ListItemIcon>
               <ScheduleIcon />
             </ListItemIcon>
-            <ListItemText
-              primary="Frecuencia"
-              secondary={service?.frecuencia}
-            />
+            <ListItemText primary="Año" secondary={service?.año} />
           </ListItem>
           <Divider variant="inset" component="li" />
           <ListItem>
             <ListItemIcon>
-              <TimerIcon />
+              <LiquorIcon />
             </ListItemIcon>
-            <ListItemText primary="Duración" secondary={service?.duracion} />
+            <ListItemText primary="Volumen" secondary={service?.volumen} />
           </ListItem>
           <Divider variant="inset" component="li" />
           <ListItem>
