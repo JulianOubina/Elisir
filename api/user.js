@@ -8,11 +8,16 @@ const bcrypt = require('bcrypt');
 //Registro
 
 router.post('/register',(req,res,next)=>{
-    let {nombre,email,password,fechaNac} = req.body;
+    let {nombre,email,password,fechaNac,genero,experiencia,notas,varietal,recomendaciones,bodegaFav} = req.body;
     nombre = nombre.trim();
     email = email.trim();
     password = password.trim();
     fechaNac = fechaNac.trim();
+    genero = genero.trim();
+    notas = notas.trim();
+    varietal = varietal.trim();
+    recomendaciones = recomendaciones.trim();
+    bodegaFav = bodegaFav.trim();
     
     if(nombre == ""||email == ""||fechaNac == ""||password == ""){
         res.json({
@@ -40,7 +45,7 @@ router.post('/register',(req,res,next)=>{
         
         })
     }else{
-        User.register(new User({ username:email,nombre:nombre,fechaNac:fechaNac}), password, (err, user) =>{
+        User.register(new User({ email:email,nombre:nombre,fechaNac:fechaNac,genero:genero,experiencia:experiencia,notas:notas,varietal:varietal,recomendaciones:recomendaciones,bodegaFav:bodegaFav}), password, (err, user) =>{
             if (err) {
                 return res.json({
                     status:'failed',
@@ -55,7 +60,7 @@ router.post('/register',(req,res,next)=>{
 })
 
 router.post('/login', passport.authenticate('local', { failureRedirect: '/login', failureFlash: true }), function(req, res) {
-    res.redirect('/');
+    res.json({status:'success'});
   });
 
 module.exports = router;

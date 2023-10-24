@@ -6,12 +6,18 @@ const UserSchema = new Schema({
     nombre:String,
     email:String,
     password:String,
-    fechaNac:Date
+    fechaNac:Date,
+    genero:String,
+    experiencia:Number,
+    notas:String,
+    varietal:String,
+    recomendaciones:String,
+    bodegaFav:String
 
 })
 
 
-UserSchema.plugin(passportLocalMongoose);
+UserSchema.plugin(passportLocalMongoose,{usernameField:'email'});
 
 const User = mongoose.model('User',UserSchema);
 

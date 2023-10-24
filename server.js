@@ -2,7 +2,7 @@ require('./config/db');
 const express = require('express')
 const cookieParser = require('cookie-parser')
 const app = require('express')();
-const port = 3000;
+const port = 8080;
 const UserRouter = require('./api/user')
 const bodyParser = require('express').json;
 const passport = require('passport')
