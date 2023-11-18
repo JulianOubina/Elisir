@@ -16,10 +16,10 @@ import {
 function ServiceDialog({ open, onClose, service, onSave, classes }) {
   const [formData, setFormData] = useState({
     nombre: '',
-    categoria: '',
+    varietal: '',
     tipo: '',
-    duracion: '',
-    frecuencia: '',
+    volumen: '',
+    bodega: '',
     costo: '',
   });
   const [errorMessage, setErrorMessage] = useState('');
@@ -28,19 +28,19 @@ function ServiceDialog({ open, onClose, service, onSave, classes }) {
     if (service) {
       setFormData({
         nombre: service.nombre,
-        categoria: service.categoria,
+        varietal: service.varietal,
         tipo: service.tipo,
-        duracion: service.duracion,
-        frecuencia: service.frecuencia,
+        volumen: service.volumen,
+        bodega: service.bodega,
         costo: service.costo,
       });
     } else {
       setFormData({
         nombre: '',
-        categoria: '',
+        varietal: '',
         tipo: '',
-        duracion: '',
-        frecuencia: '',
+        volumen: '',
+        bodega: '',
         costo: '',
       });
     }
@@ -63,7 +63,7 @@ function ServiceDialog({ open, onClose, service, onSave, classes }) {
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>
-        {service ? 'Modificar Servicio' : 'Agregar Servicio'}
+        {service ? 'Modificar Servicio' : 'Agregar Vino'}
       </DialogTitle>
       <DialogContent>
         <TextField
@@ -75,18 +75,27 @@ function ServiceDialog({ open, onClose, service, onSave, classes }) {
           onChange={handleInputChange}
         />
         <FormControl className={classes.formControl}>
-          <InputLabel>Categoría</InputLabel>
+          <InputLabel>Varietal</InputLabel>
           <Select
-            name="categoria"
-            value={formData.categoria}
+            name="varietal"
+            value={formData.varietal}
             onChange={handleInputChange}
           >
-            <MenuItem value="tutorias">Tutorías escolares</MenuItem>
-            <MenuItem value="idioma">Clases de idioma</MenuItem>
+            <MenuItem value="Malbec">Malbec</MenuItem>
+            <MenuItem value="Chardonnay">Chardonnay</MenuItem>
+            <MenuItem value="Malbec Rose">Malbec Rose</MenuItem>
+            <MenuItem value="Cabernet Sauvignon">Cabernet Sauvignon</MenuItem>
+            <MenuItem value="Merlot">Merlot</MenuItem>
+            <MenuItem value="Syrah">Syrah</MenuItem>
+            <MenuItem value="Pinot Noir">Pinot Noir</MenuItem>
+            <MenuItem value="Sauvignon Blanc">Sauvignon Blanc</MenuItem>
+            <MenuItem value="Tempranillo">Tempranillo</MenuItem>
+            <MenuItem value="Garnacha">Garnacha</MenuItem>
+            <MenuItem value="Viognier">Viognier</MenuItem>
           </Select>
         </FormControl>
         <FormControl className={classes.formControl}>
-          <InputLabel>Tipo de clase</InputLabel>
+          <InputLabel>Tipo</InputLabel>
           <Select
             name="tipo"
             value={formData.tipo}
@@ -99,21 +108,21 @@ function ServiceDialog({ open, onClose, service, onSave, classes }) {
         <TextField
           fullWidth
           margin="normal"
-          label="Duración (Horas Totales)"
-          name="duracion"
-          value={formData.duracion}
+          label="Volumen (ml)"
+          name="volumen"
+          value={formData.volumen}
           onChange={handleInputChange}
         />
         <FormControl className={classes.formControl}>
-          <InputLabel>Frecuencia</InputLabel>
+          <InputLabel>Bodega</InputLabel>
           <Select
-            name="frecuencia"
-            value={formData.frecuencia}
+            name="bodega"
+            value={formData.bodega}
             onChange={handleInputChange}
           >
-            <MenuItem value="única">Única</MenuItem>
-            <MenuItem value="semanal">Semanal</MenuItem>
-            <MenuItem value="mensual">Mensual</MenuItem>
+            <MenuItem value="Luigi Bosca">Luigi Bosca</MenuItem>
+            <MenuItem value="Fond de Cave">Fond de Cave</MenuItem>
+            <MenuItem value="Las Perdices">Las Perdices</MenuItem>
           </Select>
         </FormControl>
         <TextField
@@ -133,7 +142,7 @@ function ServiceDialog({ open, onClose, service, onSave, classes }) {
         <Button
           onClick={handleSaveClick}
           color="primary"
-          disabled={formData.duracion < 1 || formData.costo < 0}
+          disabled={formData.volumen < 1 || formData.costo < 0}
         >
           Guardar
         </Button>

@@ -24,7 +24,7 @@ import ClassIcon from '@mui/icons-material/Class';
 import useStyles from '../../styles/styles';
 import mockComments from '../../data/mockComments';
 
-function ServiceDetails({ service, onClose, onHire }) {
+function ServiceDetails({ service, onClose }) {
   const classes = useStyles();
 
   // Filter comments for the selected service
@@ -41,14 +41,14 @@ function ServiceDetails({ service, onClose, onHire }) {
             <ListItemIcon>
               <AccountCircleIcon />
             </ListItemIcon>
-            <ListItemText primary="Proveedor" secondary={service?.proveedor} />
+            <ListItemText primary="Bodega" secondary={service?.bodega} />
           </ListItem>
           <Divider variant="inset" component="li" />
           <ListItem>
             <ListItemIcon>
               <CategoryIcon />
             </ListItemIcon>
-            <ListItemText primary="Categoría" secondary={service?.categoria} />
+            <ListItemText primary="Varietal" secondary={service?.varietal} />
           </ListItem>
           <Divider variant="inset" component="li" />
           <ListItem>
@@ -99,9 +99,6 @@ function ServiceDetails({ service, onClose, onHire }) {
       <DialogActions>
         <Button onClick={onClose} color="primary">
           Cerrar
-        </Button>
-        <Button onClick={onHire} color="secondary">
-          Contratar
         </Button>
       </DialogActions>
     </Dialog>

@@ -3,9 +3,6 @@ import {
   Container,
   Typography,
   Button,
-  Card,
-  CardContent,
-  CardActions,
   TextField,
   Dialog,
   DialogActions,
@@ -16,13 +13,11 @@ import {
   Select,
   MenuItem,
   Grid,
-  IconButton,
   Pagination,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
+import ServiceCard from './ServiceCard';
+import ServiceDetails from '../ServiceExplorer/ServiceDetails';
 import mockServices from '../../data/mockServices';
 import NotificationGreen from '../../components/ui/NotificationGreen';
 
@@ -57,10 +52,10 @@ function MyServices() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [formData, setFormData] = useState({
     nombre: '',
-    categoria: '',
+    varietal: '',
     tipo: '',
-    duracion: '',
-    frecuencia: '',
+    volumen: '',
+    bodega: '',
     costo: '',
   });
   const [notificationOpen, setNotificationOpen] = useState(false);
@@ -108,81 +103,35 @@ function MyServices() {
     setNotificationOpen(true);
     setFormData({
       nombre: '',
-      categoria: '',
+      varietal: '',
       tipo: '',
-      duracion: '',
-      frecuencia: '',
+      volumen: '',
+      bodega: '',
       costo: '',
     });
     setDialogOpen(false);
   };
 
+  // Estado para controlar el diálogo de contratación
+  const handleHire = () => {
+    setDialogOpen(true);
+  };
+
+  const [selectedService, setSelectedService] = useState(null);
+
   return (
     <Container className={classes.root}>
       <Typography variant="h4" gutterBottom>
-        Mis Servicios
+        Mis Vinos
       </Typography>
-      <Button
-        variant="contained"
-        color="primary"
-        startIcon={<AddIcon />}
-        onClick={() => {
-          setCurrentService(null);
-          setFormData({
-            nombre: '',
-            categoria: '',
-            tipo: '',
-            duracion: '',
-            frecuencia: '',
-            costo: '',
-          });
-          setDialogOpen(true);
-        }}
-      >
-        Agregar Servicio
-      </Button>
       <Grid container spacing={3}>
-        {currentServices.map((service) => (
-          <Grid item xs={12} sm={6} md={4} key={service.id}>
-            <Card className={classes.card}>
-              <CardContent>
-                <Typography variant="h6">{service.nombre}</Typography>
-                <Typography variant="body2">
-                  Duración: {service.duracion}
-                </Typography>
-                <Typography variant="body2">Costo: ${service.costo}</Typography>
-              </CardContent>
-              <CardActions>
-                <IconButton
-                  onClick={() => {
-                    setCurrentService(service);
-                    setFormData({
-                      nombre: service.nombre,
-                      categoria: service.categoria,
-                      tipo: service.tipo,
-                      duracion: service.duracion,
-                      frecuencia: service.frecuencia,
-                      costo: service.costo,
-                    });
-                    setDialogOpen(true);
-                  }}
-                >
-                  <EditIcon />
-                </IconButton>
-                <IconButton
-                  onClick={() => {
-                    setServices((prevServices) =>
-                      prevServices.filter((s) => s.id !== service.id)
-                    );
-                    setNotificationMessage('Servicio eliminado correctamente');
-                    setNotificationOpen(true);
-                  }}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </CardActions>
-            </Card>
-          </Grid>
+        {currentServices.map((servicio) => (
+          <ServiceCard
+            key={servicio.id}
+            service={servicio}
+            onClick={setSelectedService}
+            onHire={handleHire}
+          />
         ))}
       </Grid>
       <div className={classes.paginationContainer}>
@@ -192,6 +141,11 @@ function MyServices() {
           onChange={(event, value) => setCurrentPage(value)}
         />
       </div>
+      <ServiceDetails
+        service={selectedService}
+        onClose={() => setSelectedService(null)}
+        onHire={handleHire}
+      />
       <Dialog
         open={dialogOpen}
         onClose={() => {
@@ -200,7 +154,7 @@ function MyServices() {
         }}
       >
         <DialogTitle>
-          {currentService ? 'Modificar Servicio' : 'Agregar Servicio'}
+          {currentService ? 'Modificar Servicio' : 'Agregar Vino'}
         </DialogTitle>
         <DialogContent>
           <TextField
@@ -212,45 +166,55 @@ function MyServices() {
             onChange={handleInputChange}
           />
           <FormControl className={classes.formControl}>
-            <InputLabel>Categoría</InputLabel>
+            <InputLabel>Varietal</InputLabel>
             <Select
-              name="categoria"
-              value={formData.categoria}
+              name="varietal"
+              value={formData.varietal}
               onChange={handleInputChange}
             >
-              <MenuItem value="tutorias">Tutorías escolares</MenuItem>
-              <MenuItem value="idioma">Clases de idioma</MenuItem>
+              <MenuItem value="Malbec">Malbec</MenuItem>
+              <MenuItem value="Chardonnay">Chardonnay</MenuItem>
+              <MenuItem value="Malbec Rose">Malbec Rose</MenuItem>
+              <MenuItem value="Cabernet Sauvignon">Cabernet Sauvignon</MenuItem>
+              <MenuItem value="Merlot">Merlot</MenuItem>
+              <MenuItem value="Syrah">Syrah</MenuItem>
+              <MenuItem value="Pinot Noir">Pinot Noir</MenuItem>
+              <MenuItem value="Sauvignon Blanc">Sauvignon Blanc</MenuItem>
+              <MenuItem value="Tempranillo">Tempranillo</MenuItem>
+              <MenuItem value="Garnacha">Garnacha</MenuItem>
+              <MenuItem value="Viognier">Viognier</MenuItem>
             </Select>
           </FormControl>
           <FormControl className={classes.formControl}>
-            <InputLabel>Tipo de clase</InputLabel>
+            <InputLabel>Tipo</InputLabel>
             <Select
               name="tipo"
               value={formData.tipo}
               onChange={handleInputChange}
             >
-              <MenuItem value="individual">Individual</MenuItem>
-              <MenuItem value="grupal">Grupal</MenuItem>
+              <MenuItem value="Semi-seco">Semi-seco</MenuItem>
+              <MenuItem value="Dulce">Dulce</MenuItem>
+              <MenuItem value="Seco">Seco</MenuItem>
             </Select>
           </FormControl>
           <TextField
             fullWidth
             margin="normal"
-            label="Duración (Horas Totales)"
-            name="duracion"
-            value={formData.duracion}
+            label="Volumen (ml)"
+            name="volumen"
+            value={formData.volumen}
             onChange={handleInputChange}
           />
           <FormControl className={classes.formControl}>
-            <InputLabel>Frecuencia</InputLabel>
+            <InputLabel>Bodega</InputLabel>
             <Select
-              name="frecuencia"
-              value={formData.frecuencia}
+              name="bodega"
+              value={formData.bodega}
               onChange={handleInputChange}
             >
-              <MenuItem value="única">Única</MenuItem>
-              <MenuItem value="semanal">Semanal</MenuItem>
-              <MenuItem value="mensual">Mensual</MenuItem>
+              <MenuItem value="Luigi Bosca">Luigi Bosca</MenuItem>
+              <MenuItem value="Fond de Cave">Fond de Cave</MenuItem>
+              <MenuItem value="Las Perdices">Las Perdices</MenuItem>
             </Select>
           </FormControl>
           <TextField
@@ -279,7 +243,7 @@ function MyServices() {
           <Button
             onClick={handleSave}
             color="primary"
-            disabled={formData.duracion < 1 || formData.costo < 0}
+            disabled={formData.volumen < 1 || formData.costo < 0}
           >
             Guardar
           </Button>

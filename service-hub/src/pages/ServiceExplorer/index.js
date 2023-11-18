@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Container, Typography, Grid, Pagination } from '@mui/material';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import DynamicSelect from '../../components/form/DynamicSelect';
 import mockServices from '../../data/mockServices';
 import ServiceCard from './ServiceCard';
@@ -10,6 +12,30 @@ import NotificationGreen from '../../components/ui/NotificationGreen';
 import ContratacionForm from './ContratacionForm';
 
 function ServiceExplorer() {
+  const settingsGET = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+
+  fetch(
+    'https://api.mercadolibre.com/sites/MLA/search?nickname=ENOTEK VINOS&category=MLA1404&units_per_pack=[1-1]',
+    settingsGET
+  )
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json(); // Convierte la respuesta en JSON
+    })
+    .then((data) => {
+      console.log(data.results[1].price); // Aquí puedes ver los datos ya procesados
+    })
+    .catch((error) => {
+      console.error('Hubo un problema con la petición fetch:', error);
+    });
+
   const classes = useStyles();
 
   // Estados lista de servicios y filtrada
@@ -17,12 +43,10 @@ function ServiceExplorer() {
   const [serviciosFiltrados, setServiciosFiltrados] = useState(servicios);
 
   // Estados para los filtros
-  const [categoriaFiltro, setCategoriaFiltro] = useState('');
+  const [varietalFiltro, setvarietalFiltro] = useState('');
   const [tipoFiltro, setTipoFiltro] = useState('');
-  const [frecuenciaFiltro, setFrecuenciaFiltro] = useState('');
-
-  // Estado para controlar el diálogo de contratación
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [bodegaFiltro, setBodegaFiltro] = useState('');
+  const [conStock, setConStock] = useState(false);
 
   // Estados para los campos del formulario de contratación
   const [telefono, setTelefono] = useState('');
@@ -41,6 +65,8 @@ function ServiceExplorer() {
     currentPage * servicesPerPage
   );
 
+  // Estado para controlar el diálogo de contratación
+  const [dialogOpen, setDialogOpen] = useState(false);
   const handleHire = () => {
     setDialogOpen(true);
   };
@@ -129,21 +155,27 @@ function ServiceExplorer() {
   // Funcion de filtrado
   const filtrarServicios = () => {
     const filtrados = servicios.filter((servicio) => {
-      return (
+      const cumpleFiltros =
         (!searchValue || servicio.nombre.includes(searchValue)) &&
-        (!categoriaFiltro || servicio.categoria === categoriaFiltro) &&
+        (!varietalFiltro || servicio.varietal === varietalFiltro) &&
         (!tipoFiltro || servicio.tipo === tipoFiltro) &&
-        (!frecuenciaFiltro || servicio.frecuencia === frecuenciaFiltro)
-      );
+        (!bodegaFiltro || servicio.bodega === bodegaFiltro);
+      return conStock ? cumpleFiltros && servicio.enStock : cumpleFiltros;
     });
     setServiciosFiltrados(filtrados);
   };
 
+  // Función para manejar el cambio del filtro de stock disponible
+  const handleStockChange = (event) => {
+    setConStock(event.target.checked);
+    filtrarServicios(); // Puedes llamar a filtrarServicios aquí si quieres aplicar el filtro inmediatamente
+  };
+
   // Funcion para limpiar filtros
   const limpiarFiltros = () => {
-    setCategoriaFiltro('');
+    setvarietalFiltro('');
     setTipoFiltro('');
-    setFrecuenciaFiltro('');
+    setBodegaFiltro('');
     setServiciosFiltrados(servicios);
   };
 
@@ -162,48 +194,94 @@ function ServiceExplorer() {
               value={searchValue}
               onChange={handleSearchChange}
             />
-            <Button>Buscar</Button>
+            <Button className={classes.rubyButton} onClick={filtrarServicios}>
+              Buscar
+            </Button>
           </div>
         </form>
 
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <DynamicSelect
-              label="Categoría"
-              value={categoriaFiltro}
-              onChange={(e) => setCategoriaFiltro(e.target.value)}
+              label="Varietal"
+              value={varietalFiltro}
+              onChange={(e) => setvarietalFiltro(e.target.value)}
               className={classes.formControl}
               options={[
-                { value: 'tutorias', label: 'Tutorías escolares' },
-                { value: 'idioma', label: 'Clases de idioma' },
+                { value: 'Malbec', label: 'Malbec' },
+                { value: 'Chardonnay', label: 'Chardonnay' },
+                { value: 'Malbec Rose', label: 'Malbec Rose' },
+                { value: 'Cabernet Sauvignon', label: 'Cabernet Sauvignon' },
+                { value: 'Merlot', label: 'Merlot' },
+                { value: 'Syrah', label: 'Syrah' },
+                { value: 'Pinot Noir', label: 'Pinot Noir' },
+                { value: 'Sauvignon Blanc', label: 'Sauvignon Blanc' },
+                { value: 'Tempranillo', label: 'Tempranillo' },
+                { value: 'Garnacha', label: 'Garnacha' },
+                { value: 'Viognier', label: 'Viognier' },
               ]}
             />
           </Grid>
 
           <Grid item xs={12} sm={6}>
             <DynamicSelect
-              label="Tipo de clase"
+              label="Tipo"
               value={tipoFiltro}
               onChange={(e) => setTipoFiltro(e.target.value)}
               className={classes.formControl}
               options={[
-                { value: 'individual', label: 'Individual' },
-                { value: 'grupal', label: 'Grupal' },
+                { value: 'Semi-seco', label: 'Semi-seco' },
+                { value: 'Dulce', label: 'Dulce' },
+                { value: 'Seco', label: 'Seco' },
               ]}
             />
           </Grid>
 
           <Grid item xs={12} sm={6}>
             <DynamicSelect
-              label="Frecuencia"
-              value={frecuenciaFiltro}
-              onChange={(e) => setFrecuenciaFiltro(e.target.value)}
+              label="Bodega"
+              value={bodegaFiltro}
+              onChange={(e) => setBodegaFiltro(e.target.value)}
               className={classes.formControl}
               options={[
-                { value: 'única', label: 'Única' },
-                { value: 'semanal', label: 'Semanal' },
-                { value: 'mensual', label: 'Mensual' },
+                { value: 'Luigi Bosca', label: 'Luigi Bosca' },
+                { value: 'Fond de Cave', label: 'Fond de Cave' },
+                { value: 'Las Perdices', label: 'Las Perdices' },
               ]}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={conStock}
+                  onChange={handleStockChange}
+                  name="stockCheckbox"
+                  sx={{
+                    color: 'primary.main', // Usa el color principal del tema para el estado no marcado
+                    '&.Mui-checked': {
+                      color: 'primary.main', // Usa el color principal del tema para el estado marcado
+                      '&:after': {
+                        // Estilo para el checkmark en sí
+                        content: '""',
+                        position: 'absolute',
+                        backgroundColor: '#7A0C1A', // Aquí estableces el color del checkmark
+                        width: '16px',
+                        height: '16px',
+                        top: 'calc(50% - 8px)',
+                        left: 'calc(50% - 8px)',
+                      },
+                    },
+                  }}
+                />
+              }
+              label="Stock Disponible"
+              style={{
+                margin: '8px 0',
+                height: '56px', // Ajusta la altura para que coincida con el dropdown
+                display: 'flex',
+                alignItems: 'center', // Asegúrate de que el contenido esté centrado verticalmente
+              }}
             />
           </Grid>
         </Grid>

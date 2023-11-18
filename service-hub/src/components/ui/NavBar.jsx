@@ -22,7 +22,8 @@ import LoginPage from '../../pages/Login';
 import mockProvider from '../../data/mockProvider';
 import logo from '../../assets/Logos/ElisirLogo.ico';
 
-const pages = ['Explorar Vinos', 'Mis Vinos', 'Comentarios', 'Contrataciones'];
+// const pages = ['Explorar Vinos', 'Mis Vinos', 'Comentarios', 'Contrataciones'];
+const pages = ['Explorar Vinos', 'Mis Vinos'];
 const pageRoutes = {
   'Explorar Vinos': {
     path: '/explorar-servicios',

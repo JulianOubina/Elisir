@@ -37,6 +37,7 @@ const useStyles = makeStyles((theme) => ({
 function ProviderProfile() {
   const classes = useStyles();
   const [isEditing, setIsEditing] = useState(false);
+  const [meli, setmeli] = useState(false);
   const [providerInfo, setProviderInfo] = useState(mockProvider); // Variable de estado para la información del proveedor
   const [updatedProvider, setUpdatedProvider] = useState(mockProvider);
 
@@ -50,13 +51,14 @@ function ProviderProfile() {
   const handleSave = () => {
     setProviderInfo(updatedProvider); // Actualizar la información del proveedor
     setIsEditing(false);
+    setmeli(false);
     setNotificationOpen(true); // Mostrar la notificación
   };
 
   return (
     <Container className={classes.root}>
       <Typography variant="h4" gutterBottom>
-        Perfil del Proveedor
+        Perfil de Usuario
       </Typography>
       <Grid container spacing={2} alignItems="center">
         <Grid item xs={12} sm={4} md={3}>
@@ -71,6 +73,9 @@ function ProviderProfile() {
           <Typography variant="subtitle1">{providerInfo.title}</Typography>
           <Typography variant="subtitle2">{`E-mail: ${providerInfo.email}`}</Typography>
           <Typography variant="string">{`Tel: ${providerInfo.phoneNumber}`}</Typography>
+          <div>
+            <Typography variant="string">{`ML NickName: ${providerInfo.nickName}`}</Typography>
+          </div>
         </Grid>
       </Grid>
       <Card className={classes.card}>
@@ -90,7 +95,41 @@ function ProviderProfile() {
             Editar
           </Button>
         </Grid>
+        <Grid item>
+          <Button
+            variant="contained"
+            color="secondary"
+            className={classes.button}
+            onClick={() => setmeli(true)}
+          >
+            Perfil de Proveedor
+          </Button>
+        </Grid>
       </Grid>
+      {/* Formulario Meli */}
+      <Dialog open={meli} onClose={() => setmeli(false)}>
+        <DialogTitle>Agregar Perfil de Mercado Libre</DialogTitle>
+        <DialogContent>
+          <TextField
+            margin="dense"
+            label="Nickname"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={updatedProvider.nickName}
+            name="nickName"
+            onChange={handleInputChange}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setmeli(false)} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={handleSave} color="primary">
+            Guardar
+          </Button>
+        </DialogActions>
+      </Dialog>
       {/* Formulario de edición */}
       <Dialog open={isEditing} onClose={() => setIsEditing(false)}>
         <DialogTitle>Editar Perfil</DialogTitle>

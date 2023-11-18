@@ -13,10 +13,12 @@ import {
   DialogActions,
   TextField,
 } from '@mui/material';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
+import StarIcon from '@mui/icons-material/Star';
 import mockComments from '../../data/mockComments';
 import NotificationGreen from '../../components/ui/NotificationGreen';
 
-function ServiceCard({ service, onClick, onHire }) {
+function ServiceCard({ service, onClick }) {
   // Calculate average rating for the service
   const serviceComments = mockComments.filter(
     (comment) => comment.serviceName === service.nombre
@@ -48,23 +50,34 @@ function ServiceCard({ service, onClick, onHire }) {
 
   const canSubmit = name && lastName && mainComment;
 
+  const [isFavorite, setIsFavorite] = useState(false); // Estado local para rastrear si es favorito
+
+  // Función para manejar el cambio de estado de favoritos
+  const handleAddToFavorites = () => {
+    const newFavoriteStatus = !isFavorite; // Cambiar el estado de favorito
+    setIsFavorite(newFavoriteStatus); // Actualizar el estado
+
+    // Aquí puedes agregar lógica adicional para persistir la actualización de favoritos,
+    // como una llamada a una API o actualizar el estado global de la aplicación.
+  };
+
   return (
     <Grid item xs={12} sm={6} md={4}>
       <Card>
         <CardContent>
           <Typography variant="h6">{service.nombre}</Typography>
-          <Typography color="textSecondary">{service.proveedor}</Typography>
+          <Typography color="textSecondary">{service.bodega}</Typography>
           <Rating value={averageRating} readOnly precision={0.5} />
         </CardContent>
         <CardActions>
           <Button size="small" color="primary" onClick={() => onClick(service)}>
             Ver más
           </Button>
-          <Button size="small" color="secondary" onClick={onHire}>
-            Contratar
-          </Button>
           <Button size="small" onClick={handleCommentClick}>
             Comentar
+          </Button>
+          <Button size="small" onClick={handleAddToFavorites}>
+            {isFavorite ? <StarIcon color="secondary" /> : <StarBorderIcon />}
           </Button>
         </CardActions>
 
