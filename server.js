@@ -4,6 +4,8 @@ const cookieParser = require('cookie-parser')
 const app = require('express')();
 const port = 8080;
 const UserRouter = require('./api/user')
+const FavsRouter = require('./api/favs')
+const OpinionRouter = require('./api/opinions')
 const bodyParser = require('express').json;
 const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy;
@@ -28,7 +30,9 @@ app.use(flash());
 app.use(passport.session());
 app.use(flash())
 app.use(bodyParser());
+app.use('/favs',FavsRouter)
 app.use('/user',UserRouter)
+app.use('/opinions',OpinionRouter)
 app.listen(port,()=>{
     console.log(`Server corriendo en el puerto ${port}`);
 })

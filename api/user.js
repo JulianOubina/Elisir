@@ -45,22 +45,43 @@ router.post('/register',(req,res,next)=>{
         
         })
     }else{
-        User.register(new User({ email:email,nombre:nombre,fechaNac:fechaNac,genero:genero,experiencia:experiencia,notas:notas,varietal:varietal,recomendaciones:recomendaciones,bodegaFav:bodegaFav}), password, (err, user) =>{
+        User.register(new User({ email:email,nombre:nombre,fechaNac:fechaNac,genero:genero,experiencia:experiencia,notas:notas,varietal:varietal,recomendaciones:recomendaciones,bodegaFav:bodegaFav,favoritos:[],usuarioMeli:""}), password, (err, user) =>{
             if (err) {
                 return res.json({
                     status:'failed',
                     message: err,
                 })
             }
-            res.redirect('/')
+            res.json({status:'success'})
         })
          
     }
 
 })
 
-router.post('/login', passport.authenticate('local', { failureRedirect: '/login', failureFlash: true }), function(req, res) {
+router.post('/login', passport.authenticate('local', { failureRedirect: '/login', failureFlash: true,failureMessage:true }), function(req, res) {
     res.json({status:'success'});
   });
 
+
+router.get('/',(req,res) => {
+    if (req.isAuthenticated()) {
+        return res.json({user: req.user});
+    } else {
+        return res.json({user:'not authenticated'});
+    }
+})
+
+router.post('/meli',async (req,res)=>{
+    let {email,userMeli} = req.body;
+    if(email == ""||userMeli == ""){
+        return res.json({
+            status:'failed',
+            message:'inputs vacios'
+        
+        })
+    }
+    nuevo = await User.findOneAndUpdate({email:email},{$set:{usuarioMeli:userMeli}},{new:true})
+    res.json({status:'success',nuevo:nuevo})    
+})
 module.exports = router;

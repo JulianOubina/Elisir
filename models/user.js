@@ -12,7 +12,9 @@ const UserSchema = new Schema({
     notas:String,
     varietal:String,
     recomendaciones:String,
-    bodegaFav:String
+    bodegaFav:String,
+    favoritos:Array,
+    usuarioMeli:String
 
 })
 
