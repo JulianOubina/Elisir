@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, Container, Typography, Grid, TextField } from '@mui/material';
-import { Link } from 'react-router-dom'; // Importa el Link de react-router-dom
+import { Link, useNavigate } from 'react-router-dom'; // Importa el Link de react-router-dom
 import makeStyles from '@mui/styles/makeStyles';
 import SimplePasswordField from '../../components/form/SimplePasswordField';
 
@@ -22,12 +22,46 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function LoginPage({ onLogin }) {
+  // function LoginPage() {
   const classes = useStyles();
+  const navigate = useNavigate();
 
-  const handleLoginClick = () => {
-    // Aquí puedes agregar la lógica de autenticación si la tienes.
-    // Por ahora, simplemente llamaremos a onLogin para cambiar el estado.
-    onLogin();
+  const [username, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  //  const handleLoginClick = () => {
+  // Aquí puedes agregar la lógica de autenticación si la tienes.
+  // Por ahora, simplemente llamaremos a onLogin para cambiar el estado.
+  //    onLogin();
+  //  };
+
+  // Función para manejar el envío del formulario
+  const handleSubmit = () => {
+    const userData = {
+      username,
+      password,
+    };
+
+    // Envio los datos al backend
+    console.log(JSON.stringify(userData));
+    // Por ejemplo, usando fetch para una solicitud POST:
+    fetch('http://localhost:3030/user/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === 'success') {
+          onLogin();
+          navigate('/');
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
   };
 
   return (
@@ -41,6 +75,8 @@ function LoginPage({ onLogin }) {
             className={classes.textField}
             label="Correo electrónico"
             variant="outlined"
+            value={username}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </Grid>
         <Grid item xs={12}>
@@ -48,6 +84,8 @@ function LoginPage({ onLogin }) {
             className={classes.textField}
             label="Contraseña"
             variant="outlined"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
         </Grid>
       </Grid>
@@ -55,19 +93,9 @@ function LoginPage({ onLogin }) {
         variant="contained"
         color="primary"
         className={classes.button}
-        onClick={handleLoginClick}
-        component={Link}
-        to="/"
+        onClick={handleSubmit}
       >
         Iniciar Sesión
-      </Button>
-      <Button
-        className={classes.button}
-        color="primary"
-        component={Link}
-        to="/forgot-password"
-      >
-        ¿Olvidaste tu contraseña?
       </Button>
       <Typography variant="body1" className={classes.button}>
         ¿Todavía no tienes una cuenta? <Link to="/registro">Regístrate</Link>
@@ -75,5 +103,4 @@ function LoginPage({ onLogin }) {
     </Container>
   );
 }
-
 export default LoginPage;
