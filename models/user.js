@@ -9,7 +9,6 @@ const UserSchema = new Schema({
     fechaNac:Date,
     genero:String,
     experiencia:Number,
-    notas:String,
     varietal:String,
     recomendaciones:String,
     bodegaFav:String,
