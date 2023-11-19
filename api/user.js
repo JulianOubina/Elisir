@@ -8,18 +8,17 @@ const bcrypt = require('bcrypt');
 //Registro
 
 router.post('/register',(req,res,next)=>{
-    let {nombre,email,password,fechaNac,genero,experiencia,notas,varietal,recomendaciones,bodegaFav} = req.body;
+    let {nombre,genero,username,password,fechaNac,bodegaFav,varietal,experiencia,recomendaciones} = req.body;
     nombre = nombre.trim();
-    email = email.trim();
+    username = username.trim();
     password = password.trim();
     fechaNac = fechaNac.trim();
     genero = genero.trim();
-    notas = notas.trim();
     varietal = varietal.trim();
     recomendaciones = recomendaciones.trim();
     bodegaFav = bodegaFav.trim();
     
-    if(nombre == ""||email == ""||fechaNac == ""||password == ""){
+    if(nombre == ""||username == ""||fechaNac == ""||password == ""){
         res.json({
             status:'failed',
             message:'inputs vacios'
@@ -32,7 +31,7 @@ router.post('/register',(req,res,next)=>{
             message:'nombre invalido'
         
         })
-    }else if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)){
+    }else if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(username)){
         res.json({
             status:'failed',
             message:'email invalido'
@@ -45,7 +44,7 @@ router.post('/register',(req,res,next)=>{
         
         })
     }else{
-        User.register(new User({ email:email,nombre:nombre,fechaNac:fechaNac,genero:genero,experiencia:experiencia,notas:notas,varietal:varietal,recomendaciones:recomendaciones,bodegaFav:bodegaFav,favoritos:[],usuarioMeli:""}), password, (err, user) =>{
+        User.register(new User({ username:username,nombre:nombre,fechaNac:fechaNac,genero:genero,experiencia:experiencia,varietal:varietal,recomendaciones:recomendaciones,bodegaFav:bodegaFav,favoritos:[],usuarioMeli:""}), password, (err, user) =>{
             if (err) {
                 return res.json({
                     status:'failed',
@@ -59,7 +58,7 @@ router.post('/register',(req,res,next)=>{
 
 })
 
-router.post('/login', passport.authenticate('local', { failureRedirect: '/login', failureFlash: true,failureMessage:true }), function(req, res) {
+router.post('/login', passport.authenticate('local', { failureFlash: true,failureMessage:true }), function(req, res) {
     res.json({status:'success'});
   });
 
@@ -73,15 +72,15 @@ router.get('/',(req,res) => {
 })
 
 router.post('/meli',async (req,res)=>{
-    let {email,userMeli} = req.body;
-    if(email == ""||userMeli == ""){
+    let {username,userMeli} = req.body;
+    if(username == ""||userMeli == ""){
         return res.json({
             status:'failed',
             message:'inputs vacios'
         
         })
     }
-    nuevo = await User.findOneAndUpdate({email:email},{$set:{usuarioMeli:userMeli}},{new:true})
+    nuevo = await User.findOneAndUpdate({username:username},{$set:{usuarioMeli:userMeli}},{new:true})
     res.json({status:'success',nuevo:nuevo})    
 })
 module.exports = router;
