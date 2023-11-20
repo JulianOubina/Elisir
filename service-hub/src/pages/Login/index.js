@@ -29,12 +29,6 @@ function LoginPage({ onLogin }) {
   const [username, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  //  const handleLoginClick = () => {
-  // Aquí puedes agregar la lógica de autenticación si la tienes.
-  // Por ahora, simplemente llamaremos a onLogin para cambiar el estado.
-  //    onLogin();
-  //  };
-
   // Función para manejar el envío del formulario
   const handleSubmit = () => {
     const userData = {
@@ -47,6 +41,7 @@ function LoginPage({ onLogin }) {
     // Por ejemplo, usando fetch para una solicitud POST:
     fetch('http://localhost:3030/user/login', {
       method: 'POST',
+      credentials: 'include', // Necessary to include cookies
       headers: {
         'Content-Type': 'application/json',
       },

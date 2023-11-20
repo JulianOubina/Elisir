@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Button,
   Container,
@@ -36,9 +36,26 @@ const useStyles = makeStyles((theme) => ({
 
 function ProviderProfile() {
   const classes = useStyles();
-  const [isEditing, setIsEditing] = useState(false);
+  const [providerInfo, setProviderInfo] = useState(null);
+  useEffect(() => {
+    fetch('http://localhost:3030/user', { credentials: 'include' })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((user) => {
+        setProviderInfo(user); // Set provider information with fetched data
+        console.log(providerInfo);
+        console.log(user);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  }, [providerInfo]);
+
   const [meli, setmeli] = useState(false);
-  const [providerInfo, setProviderInfo] = useState(mockProvider); // Variable de estado para la información del proveedor
   const [updatedProvider, setUpdatedProvider] = useState(mockProvider);
 
   const handleInputChange = (event) => {
@@ -50,10 +67,14 @@ function ProviderProfile() {
 
   const handleSave = () => {
     setProviderInfo(updatedProvider); // Actualizar la información del proveedor
-    setIsEditing(false);
     setmeli(false);
     setNotificationOpen(true); // Mostrar la notificación
   };
+
+  if (!providerInfo) {
+    // Loading state, or return null, or a spinner etc.
+    return <div>Loading...</div>;
+  }
 
   return (
     <Container className={classes.root}>
@@ -63,38 +84,28 @@ function ProviderProfile() {
       <Grid container spacing={2} alignItems="center">
         <Grid item xs={12} sm={4} md={3}>
           <Avatar
-            alt={`${providerInfo.firstName} ${providerInfo.lastName}`}
-            src={providerInfo.profileImage}
+            alt={`${providerInfo.user.nombre}`}
+            src="/static/images/avatar/2.jpg"
             className={classes.largeAvatar}
           />
         </Grid>
         <Grid item xs={12} sm={8} md={9}>
-          <Typography variant="h5">{`${providerInfo.firstName} ${providerInfo.lastName}`}</Typography>
-          <Typography variant="subtitle1">{providerInfo.title}</Typography>
-          <Typography variant="subtitle2">{`E-mail: ${providerInfo.email}`}</Typography>
-          <Typography variant="string">{`Tel: ${providerInfo.phoneNumber}`}</Typography>
+          <Typography variant="h5">{`${providerInfo.user.nombre}`}</Typography>
+          <Typography variant="subtitle2">{`E-mail: ${providerInfo.user.username}`}</Typography>
           <div>
-            <Typography variant="string">{`ML NickName: ${providerInfo.nickName}`}</Typography>
+            <Typography variant="string">{`ML NickName: ${providerInfo.user.usuarioMeli}`}</Typography>
           </div>
         </Grid>
       </Grid>
       <Card className={classes.card}>
         <CardContent>
           <Typography variant="h6">Sobre mí:</Typography>
-          <Typography variant="body2">{providerInfo.experience}</Typography>
+          <Typography variant="body2">
+            {providerInfo.user.experiencia}
+          </Typography>
         </CardContent>
       </Card>
       <Grid container spacing={2}>
-        <Grid item>
-          <Button
-            variant="contained"
-            color="secondary"
-            className={classes.button}
-            onClick={() => setIsEditing(true)}
-          >
-            Editar
-          </Button>
-        </Grid>
         <Grid item>
           <Button
             variant="contained"
@@ -116,89 +127,13 @@ function ProviderProfile() {
             type="text"
             fullWidth
             variant="outlined"
-            value={updatedProvider.nickName}
+            value={updatedProvider.usuarioMeli}
             name="nickName"
             onChange={handleInputChange}
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setmeli(false)} color="primary">
-            Cancelar
-          </Button>
-          <Button onClick={handleSave} color="primary">
-            Guardar
-          </Button>
-        </DialogActions>
-      </Dialog>
-      {/* Formulario de edición */}
-      <Dialog open={isEditing} onClose={() => setIsEditing(false)}>
-        <DialogTitle>Editar Perfil</DialogTitle>
-        <DialogContent>
-          <TextField
-            margin="dense"
-            label="Nombre"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={updatedProvider.firstName}
-            name="firstName"
-            onChange={handleInputChange}
-          />
-          <TextField
-            margin="dense"
-            label="Apellido"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={updatedProvider.lastName}
-            name="lastName"
-            onChange={handleInputChange}
-          />
-          <TextField
-            margin="dense"
-            label="Mail"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={updatedProvider.email}
-            name="mail"
-            onChange={handleInputChange}
-          />
-          <TextField
-            margin="dense"
-            label="Nro Télefono"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={updatedProvider.phoneNumber}
-            name="phoneNumber"
-            onChange={handleInputChange}
-          />
-          <TextField
-            margin="dense"
-            label="Título"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={updatedProvider.title}
-            name="title"
-            onChange={handleInputChange}
-          />
-          <TextField
-            margin="dense"
-            label="Experiencia"
-            type="text"
-            fullWidth
-            variant="outlined"
-            multiline
-            rows={4} // Aquí especificas cuántas líneas quieres que se muestren
-            value={updatedProvider.experience}
-            name="experience"
-            onChange={handleInputChange}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setIsEditing(false)} color="primary">
             Cancelar
           </Button>
           <Button onClick={handleSave} color="primary">

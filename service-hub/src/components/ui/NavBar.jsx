@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -19,7 +19,6 @@ import Comments from '../../pages/Comments';
 import Hirings from '../../pages/Hirings';
 import SignUpPage from '../../pages/Signup';
 import LoginPage from '../../pages/Login';
-import mockProvider from '../../data/mockProvider';
 import logo from '../../assets/Logos/ElisirLogo.ico';
 
 // const pages = ['Explorar Vinos', 'Mis Vinos', 'Comentarios', 'Contrataciones'];
@@ -41,7 +40,18 @@ const homePage = { path: '/' };
 const settings = ['Perfil', 'Cambiar contraseña', 'Salir'];
 
 function ResponsiveAppBar({ isAuthenticated, onLogout }) {
-  const [providerInfo] = useState(mockProvider); // Variable de estado para la información del proveedor
+  const [providerInfo, setProviderInfo] = useState(null); // Variable de estado para la información del proveedor
+  useEffect(() => {
+    fetch('http://localhost:3030/user', { credentials: 'include' })
+      .then((response) => response.json())
+      .then((user) => {
+        setProviderInfo(user);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  }, [providerInfo]);
+  console.log(providerInfo);
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -211,7 +221,7 @@ function ResponsiveAppBar({ isAuthenticated, onLogout }) {
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     <Avatar
-                      alt={`${providerInfo.firstName} ${providerInfo.lastName}`}
+                      alt={`${providerInfo.user.nombre}`}
                       src="/static/images/avatar/2.jpg"
                     />
                   </IconButton>

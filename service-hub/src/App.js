@@ -23,6 +23,10 @@ function App() {
   };
 
   const handleLogout = () => {
+    fetch('http://localhost:3030/user/logout', {
+      method: 'GET',
+      credentials: 'include',
+    });
     setIsAuthenticated(false);
   };
 
