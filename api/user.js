@@ -59,9 +59,13 @@ router.post('/register',(req,res,next)=>{
 })
 
 router.post('/login', passport.authenticate('local', { failureFlash: true,failureMessage:true }), function(req, res) {
-    res.json({status:'success'});
+    res.json({status:'success', user: req.user});
   });
 
+  router.get('/logout', (req, res) => {
+    req.session.destroy();
+    res.clearCookie('connect.sid'); // Replace 'connect.sid' with your cookie's name
+  });
 
 router.get('/',(req,res) => {
     if (req.isAuthenticated()) {

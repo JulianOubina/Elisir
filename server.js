@@ -19,13 +19,21 @@ passport.use(new LocalStrategy(user.authenticate()));
 passport.serializeUser(user.serializeUser());
 passport.deserializeUser(user.deserializeUser());
 
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000', // Your frontend's origin
+    credentials: true
+  }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(require('express-session')({
     secret: 'keyboard cat',
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    cookie: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production', // Only set cookies over HTTPS in production
+        sameSite: 'lax', // Can be 'strict', 'lax', or 'none'
+      }
 }));
 app.use(passport.initialize());
 app.use(flash());
