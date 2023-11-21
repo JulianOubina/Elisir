@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Container, Typography, Grid, Pagination } from '@mui/material';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import DynamicSelect from '../../components/form/DynamicSelect';
-import mockServices from '../../data/mockServices';
 import ServiceCard from './ServiceCard';
 import ServiceDetails from './ServiceDetails';
 import useStyles from '../../styles/styles';
@@ -12,35 +11,33 @@ import NotificationGreen from '../../components/ui/NotificationGreen';
 import ContratacionForm from './ContratacionForm';
 
 function ServiceExplorer() {
-  const settingsGET = {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  };
-
-  fetch(
-    'https://api.mercadolibre.com/sites/MLA/search?nickname=ENOTEK VINOS&category=MLA1404&units_per_pack=[1-1]',
-    settingsGET
-  )
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json(); // Convierte la respuesta en JSON
-    })
-    .then((data) => {
-      console.log(data.results[1].price); // Aquí puedes ver los datos ya procesados
-    })
-    .catch((error) => {
-      console.error('Hubo un problema con la petición fetch:', error);
-    });
-
   const classes = useStyles();
 
   // Estados lista de servicios y filtrada
-  const [servicios] = useState(mockServices);
-  const [serviciosFiltrados, setServiciosFiltrados] = useState(servicios);
+  const [servicios, setServicios] = useState([]);
+  const [serviciosFiltrados, setServiciosFiltrados] = useState([]);
+
+  // Fetch data from MercadoLibre API
+  useEffect(() => {
+    const MELI_API_URL =
+      'https://api.mercadolibre.com/sites/MLA/search?category=MLA1404&units_per_pack=[1-1]&SALE_FORMAT=1359391&UNIT_VOLUME=(*-1L)';
+
+    const fetchData = async () => {
+      try {
+        const response = await fetch(MELI_API_URL);
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+        setServicios(data.results);
+        setServiciosFiltrados(data.results); // Assuming you want to initially show all results
+      } catch (error) {
+        console.error('Could not fetch data from MercadoLibre API', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   // Estados para los filtros
   const [varietalFiltro, setvarietalFiltro] = useState('');
@@ -312,6 +309,7 @@ function ServiceExplorer() {
 
         <ServiceDetails
           service={selectedService}
+          resultados={serviciosFiltrados}
           onClose={() => setSelectedService(null)}
           onHire={handleHire}
         />

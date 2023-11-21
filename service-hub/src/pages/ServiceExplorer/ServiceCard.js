@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Grid,
   Card,
@@ -47,10 +47,12 @@ function ServiceCard({ service, onClick }) {
   const [name, setName] = useState('');
   const [lastName, setLastName] = useState('');
   const [mainComment, setMainComment] = useState('');
+  const [brand, setBrand] = useState('-');
 
   const canSubmit = name && lastName && mainComment;
 
   const [isFavorite, setIsFavorite] = useState(false); // Estado local para rastrear si es favorito
+  const [caracteristicas, setCaracteristicas] = useState({});
 
   // Función para manejar el cambio de estado de favoritos
   const handleAddToFavorites = () => {
@@ -60,17 +62,57 @@ function ServiceCard({ service, onClick }) {
     // Aquí puedes agregar lógica adicional para persistir la actualización de favoritos,
     // como una llamada a una API o actualizar el estado global de la aplicación.
   };
+  // Fetch data from MercadoLibre API
+  const MELI_API_URL =
+    // eslint-disable-next-line prefer-template
+    'https://api.mercadolibre.com/products/search?status=active&site_id=MLA&product_identifier=' +
+    service.catalog_product_id;
+
+  // Fetch data from MercadoLibre API
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(MELI_API_URL);
+        const data = await response.json();
+        setCaracteristicas(data);
+
+        if (data.results) {
+          const brandAttribute = data.results[0].attributes.find(
+            (attr) => attr.id === 'BRAND'
+          );
+          if (brandAttribute) {
+            setBrand(brandAttribute.value_name);
+          }
+        }
+      } catch (error) {
+        console.error('Could not fetch data from MercadoLibre API', error);
+      }
+    };
+
+    fetchData();
+  }, [service]);
+
+  if (!caracteristicas.results) {
+    // Loading state, or return null, or a spinner etc.
+    return <div> </div>;
+  }
 
   return (
     <Grid item xs={12} sm={6} md={4}>
       <Card>
         <CardContent>
-          <Typography variant="h6">{service.nombre}</Typography>
-          <Typography color="textSecondary">{service.bodega}</Typography>
+          <Typography variant="h6">{brand}</Typography>
+          <Typography color="textSecondary">
+            {caracteristicas.results[0].attributes[0].value_name}
+          </Typography>
           <Rating value={averageRating} readOnly precision={0.5} />
         </CardContent>
         <CardActions>
-          <Button size="small" color="primary" onClick={() => onClick(service)}>
+          <Button
+            size="small"
+            color="primary"
+            onClick={() => onClick(caracteristicas)}
+          >
             Ver más
           </Button>
           <Button size="small" onClick={handleCommentClick}>

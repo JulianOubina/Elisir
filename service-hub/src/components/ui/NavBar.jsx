@@ -50,7 +50,7 @@ function ResponsiveAppBar({ isAuthenticated, onLogout }) {
       .catch((error) => {
         console.error('Error:', error);
       });
-  }, [providerInfo]);
+  }, [isAuthenticated]);
   console.log(providerInfo);
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);

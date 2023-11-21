@@ -14,7 +14,6 @@ import {
   DialogTitle,
 } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-import mockProvider from '../../data/mockProvider';
 import NotificationGreen from '../../components/ui/NotificationGreen';
 
 const useStyles = makeStyles((theme) => ({
@@ -36,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
 
 function ProviderProfile() {
   const classes = useStyles();
-  const [providerInfo, setProviderInfo] = useState(null);
+  const [providerInfo, setProviderInfo] = useState({});
   useEffect(() => {
     fetch('http://localhost:3030/user', { credentials: 'include' })
       .then((response) => {
@@ -56,7 +55,7 @@ function ProviderProfile() {
   }, [providerInfo]);
 
   const [meli, setmeli] = useState(false);
-  const [updatedProvider, setUpdatedProvider] = useState(mockProvider);
+  const [updatedProvider, setUpdatedProvider] = useState({});
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -66,12 +65,27 @@ function ProviderProfile() {
   const [notificationOpen, setNotificationOpen] = useState(false);
 
   const handleSave = () => {
-    setProviderInfo(updatedProvider); // Actualizar la información del proveedor
+    console.log(updatedProvider);
+    fetch('http://localhost:3030/user/meli', {
+      method: 'POST',
+      credentials: 'include', // Necessary to include cookies
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userName: providerInfo.user.username,
+        userMeli: updatedProvider.nickName,
+      }),
+    })
+      .then((response) => response.json())
+      .catch((error) => {
+        console.error('Error:', error);
+      });
     setmeli(false);
     setNotificationOpen(true); // Mostrar la notificación
   };
 
-  if (!providerInfo) {
+  if (!providerInfo.user) {
     // Loading state, or return null, or a spinner etc.
     return <div>Loading...</div>;
   }
