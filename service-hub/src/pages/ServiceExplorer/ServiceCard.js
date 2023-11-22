@@ -101,17 +101,32 @@ function ServiceCard({ service, onClick }) {
     <Grid item xs={12} sm={6} md={4}>
       <Card>
         <CardContent>
-          <Typography variant="h6">{brand}</Typography>
-          <img
-            src={caracteristicas.results[0].pictures[0].url}
-            alt="description"
-            height={250}
-          />
-          <Typography color="textSecondary">
-            {caracteristicas.results[0].attributes[0].value_name}
-          </Typography>
-          <Rating value={averageRating} readOnly precision={0.5} />
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <Typography variant="h5" marginBottom={1} marginTop={1}>
+                {brand}
+              </Typography>
+            </Grid>
+            <Grid item xs={3} sm={3} md={3}>
+              <Typography color="textSecondary" marginBottom={1}>
+                {caracteristicas.results[0].attributes[0].value_name}
+              </Typography>
+              <Rating value={averageRating} readOnly precision={0.5} />
+            </Grid>
+            <Grid item xs={9} sm={9} md={9}>
+              <img
+                src={caracteristicas.results[0].pictures[0].url}
+                style={{
+                  width: '100%',
+                  height: '40vh',
+                  objectFit: 'contain',
+                }}
+                alt="Product"
+              />
+            </Grid>
+          </Grid>
         </CardContent>
+
         <CardActions>
           <Button
             size="small"
