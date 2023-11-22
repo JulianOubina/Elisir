@@ -102,6 +102,11 @@ function ServiceCard({ service, onClick }) {
       <Card>
         <CardContent>
           <Typography variant="h6">{brand}</Typography>
+          <img
+            src={caracteristicas.results[0].pictures[0].url}
+            alt="description"
+            height={250}
+          />
           <Typography color="textSecondary">
             {caracteristicas.results[0].attributes[0].value_name}
           </Typography>

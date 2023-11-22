@@ -15,6 +15,12 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
     minWidth: 120,
   },
+  botonBuscar: {
+    backgroundColor: 'white',
+    color: 'white',
+    margin: theme.spacing(1),
+    minWidth: 60,
+  },
   menuButton: {
     marginRight: theme.spacing(2),
   },
@@ -134,6 +140,17 @@ const useStyles = makeStyles((theme) => ({
     '&:hover': {
       backgroundColor: '#7A0C1A', // Un tono más oscuro de rojo rubí para el hover
     },
+    marginBottom: 15,
+  },
+  buscarButton: {
+    backgroundColor: '#9B111E', // Rojo rubí
+    color: 'white',
+    '&:hover': {
+      backgroundColor: '#7A0C1A', // Un tono más oscuro de rojo rubí para el hover
+    },
+    minHeight: 40,
+    marginTop: 16,
+    minWidth: 150,
   },
   outlinedRubyButton: {
     border: 'none',

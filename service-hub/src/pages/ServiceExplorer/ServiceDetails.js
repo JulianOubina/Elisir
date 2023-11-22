@@ -83,9 +83,13 @@ function ServiceDetails({ service, resultados, onClose }) {
           (result) => result.catalog_product_id === service.keywords
         );
         if (precioAttribute && precioAttribute.original_price) {
-          setPrecio(precioAttribute.original_price);
+          // eslint-disable-next-line prefer-template
+          const precioAux = '$ ' + precioAttribute.original_price;
+          setPrecio(precioAux);
         } else {
-          setPrecio(precioAttribute.price);
+          // eslint-disable-next-line prefer-template
+          const precioAux = '$ ' + precioAttribute.price;
+          setPrecio(precioAux);
         }
       }
     }

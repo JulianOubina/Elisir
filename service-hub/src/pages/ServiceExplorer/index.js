@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Container, Typography, Grid, Pagination } from '@mui/material';
+import {
+  Button,
+  Container,
+  Typography,
+  Grid,
+  Pagination,
+  TextField,
+} from '@mui/material';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import DynamicSelect from '../../components/form/DynamicSelect';
@@ -112,10 +119,10 @@ function ServiceExplorer() {
   };
 
   // Variable para la barra de busqueda
-  const [searchValue, setSearchValue] = useState('');
+  /*   const [searchValue, setSearchValue] = useState('');
   const handleSearchChange = (event) => {
     setSearchValue(event.target.value);
-  };
+  }; */
 
   // Función para validar que la hora de finalización sea mayor que la hora de inicio y otras validaciones
   const CheckTime = () => {
@@ -153,8 +160,8 @@ function ServiceExplorer() {
   const filtrarServicios = () => {
     const filtrados = servicios.filter((servicio) => {
       const cumpleFiltros =
-        (!searchValue || servicio.nombre.includes(searchValue)) &&
-        (!varietalFiltro || servicio.varietal === varietalFiltro) &&
+        /*         (!searchValue || servicio.nombre.includes(searchValue)) &&
+         */ (!varietalFiltro || servicio.varietal === varietalFiltro) &&
         (!tipoFiltro || servicio.tipo === tipoFiltro) &&
         (!bodegaFiltro || servicio.bodega === bodegaFiltro);
       return conStock ? cumpleFiltros && servicio.enStock : cumpleFiltros;
@@ -179,26 +186,37 @@ function ServiceExplorer() {
   return (
     <div>
       <Container className={classes.mainContentLeft}>
-        <Typography variant="h4" gutterBottom color>
-          Explorar Vinos
-        </Typography>
-        <form>
-          <div>
-            <input
+        <Grid container spacing={2}>
+          <Grid item sm={6}>
+            <Typography variant="h4" gutterBottom color>
+              Explorar Vinos
+            </Typography>
+          </Grid>
+
+          <Grid item sm={3}>
+            <TextField
+              id="filled-basic"
+              label="Filled"
+              variant="filled"
+              className={classes.botonBuscar}
+            />
+            {/* <input
               type="search"
-              className="form-control mb-3"
               placeholder="Buscar vinos..."
+              className={classes.title}
               value={searchValue}
               onChange={handleSearchChange}
-            />
-            <Button className={classes.rubyButton} onClick={filtrarServicios}>
+            /> */}
+          </Grid>
+          <Grid item sm={3}>
+            <Button className={classes.buscarButton} onClick={filtrarServicios}>
               Buscar
             </Button>
-          </div>
-        </form>
+          </Grid>
+        </Grid>
 
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={6} sm={6}>
             <DynamicSelect
               label="Varietal"
               value={varietalFiltro}
@@ -219,8 +237,7 @@ function ServiceExplorer() {
               ]}
             />
           </Grid>
-
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={6} sm={6}>
             <DynamicSelect
               label="Tipo"
               value={tipoFiltro}
@@ -233,8 +250,7 @@ function ServiceExplorer() {
               ]}
             />
           </Grid>
-
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={6} sm={6}>
             <DynamicSelect
               label="Bodega"
               value={bodegaFiltro}
@@ -247,7 +263,20 @@ function ServiceExplorer() {
               ]}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={6} sm={6}>
+            <DynamicSelect
+              label="Maridaje"
+              value={bodegaFiltro}
+              onChange={(e) => setBodegaFiltro(e.target.value)}
+              className={classes.formControl}
+              options={[
+                { value: 'Luigi Bosca', label: 'Luigi Bosca' },
+                { value: 'Fond de Cave', label: 'Fond de Cave' },
+                { value: 'Las Perdices', label: 'Las Perdices' },
+              ]}
+            />
+          </Grid>
+          <Grid item xs={6} sm={6}>
             <FormControlLabel
               control={
                 <Checkbox
@@ -282,12 +311,23 @@ function ServiceExplorer() {
             />
           </Grid>
         </Grid>
-        <Button className={classes.rubyButton} onClick={filtrarServicios}>
-          Filtrar
-        </Button>
-        <Button className={classes.outlinedRubyButton} onClick={limpiarFiltros}>
-          Limpiar Filtros
-        </Button>
+        <Grid container spacing={2}>
+          <Grid item xs={1}>
+            <Button className={classes.rubyButton} onClick={filtrarServicios}>
+              Filtrar
+            </Button>
+          </Grid>
+
+          <Grid item xs={11}>
+            <Button
+              className={classes.outlinedRubyButton}
+              onClick={limpiarFiltros}
+            >
+              Limpiar Filtros
+            </Button>
+          </Grid>
+        </Grid>
+
         <Grid container spacing={3}>
           {currentServices.map((servicio) => (
             <ServiceCard
