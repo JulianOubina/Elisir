@@ -222,7 +222,7 @@ function LandingPage() {
               <Grid item xs={12} sm={4} key={service.id}>
                 <Card
                   className={classes.card}
-                  onClick={() => setSelectedService(service)}
+                  // onClick={() => setSelectedService(service)}
                 >
                   <CardMedia
                     className={classes.media}
