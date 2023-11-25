@@ -5,21 +5,32 @@ import {
   Typography,
   Grid,
   Avatar,
-  Card,
-  CardContent,
   TextField,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  List,
+  ListItem,
+  ListItemIcon,
+  Divider,
+  ListItemText,
 } from '@mui/material';
+
+import LiquorIcon from '@mui/icons-material/Liquor';
+import WineBarIcon from '@mui/icons-material/WineBar';
+import StoreIcon from '@mui/icons-material/Store';
+import LocalDrinkIcon from '@mui/icons-material/LocalDrink';
+
 import makeStyles from '@mui/styles/makeStyles';
+import LinearProgress from '@mui/material/LinearProgress';
 import NotificationGreen from '../../components/ui/NotificationGreen';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
     padding: theme.spacing(3),
+    backgroundColor: '#C0A1AE',
   },
   button: {
     margin: theme.spacing(1),
@@ -96,29 +107,79 @@ function ProviderProfile() {
         Perfil de Usuario
       </Typography>
       <Grid container spacing={2} alignItems="center">
-        <Grid item xs={12} sm={4} md={3}>
+        <Grid item xs={12}>
           <Avatar
             alt={`${providerInfo.user.nombre}`}
             src="/static/images/avatar/2.jpg"
             className={classes.largeAvatar}
           />
         </Grid>
-        <Grid item xs={12} sm={8} md={9}>
+
+        <Grid item xs={12}>
           <Typography variant="h5">{`${providerInfo.user.nombre}`}</Typography>
           <Typography variant="subtitle2">{`E-mail: ${providerInfo.user.username}`}</Typography>
-          <div>
-            <Typography variant="string">{`ML NickName: ${providerInfo.user.usuarioMeli}`}</Typography>
-          </div>
         </Grid>
       </Grid>
-      <Card className={classes.card}>
-        <CardContent>
-          <Typography variant="h6">Sobre mí:</Typography>
-          <Typography variant="body2">
-            {providerInfo.user.experiencia}
-          </Typography>
-        </CardContent>
-      </Card>
+      <List>
+        {providerInfo.user.usuarioMeli && (
+          <>
+            <Divider variant="inset" component="li" />
+            <ListItem>
+              <ListItemIcon>
+                <StoreIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary="Perfil de MercadoLibre"
+                secondary={
+                  <a
+                    href={`https://www.mercadolibre.com.ar/perfil/${providerInfo.user.usuarioMeli}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {providerInfo.user.usuarioMeli}
+                  </a>
+                }
+              />
+            </ListItem>
+          </>
+        )}
+        <Divider variant="inset" component="li" />
+        <ListItem>
+          <ListItemIcon>
+            <LiquorIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary="Bodega Favorita"
+            secondary={providerInfo.user.bodegaFav}
+          />
+        </ListItem>
+        <Divider variant="inset" component="li" />
+        <ListItem>
+          <ListItemIcon>
+            <LocalDrinkIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary="Varietal Preferido"
+            secondary={providerInfo.user.varietal}
+          />
+        </ListItem>
+        <Divider variant="inset" component="li" />
+        <ListItem>
+          <ListItemIcon>
+            <WineBarIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary="Indice de Experiencia"
+            secondary={
+              <LinearProgress
+                variant="determinate"
+                value={providerInfo.user.experiencia * 10}
+              />
+            }
+          />
+        </ListItem>
+        <Divider variant="inset" component="li" />
+      </List>
       <Grid container spacing={2}>
         <Grid item>
           <Button
