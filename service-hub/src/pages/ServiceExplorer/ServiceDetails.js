@@ -15,9 +15,11 @@ import {
   Button,
   // Rating,
 } from '@mui/material';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import CategoryIcon from '@mui/icons-material/Category';
-import ScheduleIcon from '@mui/icons-material/Schedule';
+import StoreIcon from '@mui/icons-material/Store';
+import PlaceIcon from '@mui/icons-material/Place';
+import PublicIcon from '@mui/icons-material/Public';
+import WineBarIcon from '@mui/icons-material/WineBar';
+import DinnerDiningIcon from '@mui/icons-material/DinnerDining';
 import LiquorIcon from '@mui/icons-material/Liquor';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import ClassIcon from '@mui/icons-material/Class';
@@ -39,6 +41,10 @@ function ServiceDetails({ service, resultados, onClose }) {
   const [maridaje, setMaridaje] = useState('-');
   const [region, setRegion] = useState('-');
   const [precio, setPrecio] = useState('-');
+  const [ciudad, setCiudad] = useState('-');
+  const [barrio, setBarrio] = useState('-');
+  const [vendedor, setVendedor] = useState('-');
+  const [link, setLink] = useState('-');
 
   useEffect(() => {
     if (service) {
@@ -88,6 +94,10 @@ function ServiceDetails({ service, resultados, onClose }) {
         const precioAttribute = resultados.find(
           (result) => result.catalog_product_id === service.keywords
         );
+        setCiudad(precioAttribute.address.state_name);
+        setBarrio(precioAttribute.address.city_name);
+        setVendedor(precioAttribute.seller.nickname);
+        setLink(precioAttribute.permalink);
         if (precioAttribute && precioAttribute.original_price) {
           // eslint-disable-next-line prefer-template
           const precioAux = '$ ' + precioAttribute.original_price;
@@ -108,14 +118,38 @@ function ServiceDetails({ service, resultados, onClose }) {
         <List>
           <ListItem>
             <ListItemIcon>
-              <AccountCircleIcon />
+              <StoreIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary="Vendedor"
+              secondary={
+                <a href={link} target="_blank" rel="noopener noreferrer">
+                  {vendedor}
+                </a>
+              }
+            />
+          </ListItem>
+          <Divider variant="inset" component="li" />
+          <ListItem>
+            <ListItemIcon>
+              <PlaceIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary="Ubicacion"
+              secondary={`${ciudad} - ${barrio}`}
+            />
+          </ListItem>
+          <Divider variant="inset" component="li" />
+          <ListItem>
+            <ListItemIcon>
+              <WineBarIcon />
             </ListItemIcon>
             <ListItemText primary="Bodega" secondary={bodega} />
           </ListItem>
           <Divider variant="inset" component="li" />
           <ListItem>
             <ListItemIcon>
-              <CategoryIcon />
+              <LiquorIcon />
             </ListItemIcon>
             <ListItemText primary="Varietal" secondary={varietal} />
           </ListItem>
@@ -129,14 +163,14 @@ function ServiceDetails({ service, resultados, onClose }) {
           <Divider variant="inset" component="li" />
           <ListItem>
             <ListItemIcon>
-              <ScheduleIcon />
+              <DinnerDiningIcon />
             </ListItemIcon>
             <ListItemText primary="Maridaje" secondary={maridaje} />
           </ListItem>
           <Divider variant="inset" component="li" />
           <ListItem>
             <ListItemIcon>
-              <LiquorIcon />
+              <PublicIcon />
             </ListItemIcon>
             <ListItemText primary="Region" secondary={region} />
           </ListItem>
