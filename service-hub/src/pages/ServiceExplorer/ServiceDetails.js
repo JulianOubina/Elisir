@@ -16,6 +16,7 @@ import {
   // Rating,
 } from '@mui/material';
 import StoreIcon from '@mui/icons-material/Store';
+import InventoryIcon from '@mui/icons-material/Inventory';
 import PlaceIcon from '@mui/icons-material/Place';
 import PublicIcon from '@mui/icons-material/Public';
 import WineBarIcon from '@mui/icons-material/WineBar';
@@ -45,6 +46,7 @@ function ServiceDetails({ service, resultados, onClose }) {
   const [barrio, setBarrio] = useState('-');
   const [vendedor, setVendedor] = useState('-');
   const [link, setLink] = useState('-');
+  const [stock, setStock] = useState('Sin Stock');
 
   useEffect(() => {
     if (service) {
@@ -98,6 +100,9 @@ function ServiceDetails({ service, resultados, onClose }) {
         setBarrio(precioAttribute.address.city_name);
         setVendedor(precioAttribute.seller.nickname);
         setLink(precioAttribute.permalink);
+        if (precioAttribute.available_quantity > 0) {
+          setStock('Disponible');
+        }
         if (precioAttribute && precioAttribute.original_price) {
           // eslint-disable-next-line prefer-template
           const precioAux = '$ ' + precioAttribute.original_price;
@@ -128,6 +133,13 @@ function ServiceDetails({ service, resultados, onClose }) {
                 </a>
               }
             />
+          </ListItem>
+          <Divider variant="inset" component="li" />
+          <ListItem>
+            <ListItemIcon>
+              <InventoryIcon />
+            </ListItemIcon>
+            <ListItemText primary="Stock" secondary={stock} />
           </ListItem>
           <Divider variant="inset" component="li" />
           <ListItem>
