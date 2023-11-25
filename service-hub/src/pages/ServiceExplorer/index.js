@@ -1,14 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Button,
-  Container,
-  Typography,
-  Grid,
-  Pagination,
-  TextField,
-} from '@mui/material';
-import Checkbox from '@mui/material/Checkbox';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import { Button, Container, Typography, Grid, Pagination } from '@mui/material';
+
 import DynamicSelect from '../../components/form/DynamicSelect';
 import ServiceCard from './ServiceCard';
 import ServiceDetails from './ServiceDetails';
@@ -20,37 +12,79 @@ import ContratacionForm from './ContratacionForm';
 function ServiceExplorer() {
   const classes = useStyles();
 
+  const servicesPerPage = 9;
+  const [currentServices, setCurrentServices] = useState();
+  const [totalPages, setTotalPages] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+
   // Estados lista de servicios y filtrada
   const [servicios, setServicios] = useState([]);
   const [serviciosFiltrados, setServiciosFiltrados] = useState([]);
+  const [todo, setTodo] = useState({});
+  const [url, setUrl] = useState(
+    'https://api.mercadolibre.com/sites/MLA/search?category=MLA1404&units_per_pack=[1-1]&SALE_FORMAT=1359391&UNIT_VOLUME=(*-1L)'
+  );
 
   // Fetch data from MercadoLibre API
   useEffect(() => {
-    const MELI_API_URL =
-      'https://api.mercadolibre.com/sites/MLA/search?category=MLA1404&units_per_pack=[1-1]&SALE_FORMAT=1359391&UNIT_VOLUME=(*-1L)';
-
     const fetchData = async () => {
       try {
-        const response = await fetch(MELI_API_URL);
+        const response = await fetch(url);
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const data = await response.json();
         setServicios(data.results);
         setServiciosFiltrados(data.results); // Assuming you want to initially show all results
+
+        setTotalPages(Math.ceil(serviciosFiltrados.length / servicesPerPage));
+        setCurrentServices(
+          serviciosFiltrados.slice(
+            (currentPage - 1) * servicesPerPage,
+            currentPage * servicesPerPage
+          )
+        );
+
+        if (!todo.available_filters) {
+          setTodo(data);
+        }
       } catch (error) {
         console.error('Could not fetch data from MercadoLibre API', error);
       }
     };
 
     fetchData();
-  }, []);
+  }, [url]);
+
+  useEffect(() => {
+    setTotalPages(Math.ceil(serviciosFiltrados.length / servicesPerPage));
+    setCurrentServices(
+      serviciosFiltrados.slice(
+        (currentPage - 1) * servicesPerPage,
+        currentPage * servicesPerPage
+      )
+    );
+  }, [serviciosFiltrados, currentPage]);
 
   // Estados para los filtros
   const [varietalFiltro, setvarietalFiltro] = useState('');
+  const [varietalDisplay, setvarietalDisplay] = useState('');
+
   const [tipoFiltro, setTipoFiltro] = useState('');
+  const [tipoDisplay, settipoDisplay] = useState('');
+
   const [bodegaFiltro, setBodegaFiltro] = useState('');
-  const [conStock, setConStock] = useState(false);
+  const [bodegaDisplay, setBodegaDisplay] = useState('');
+
+  const [ubicacionFiltro, setUbicacionFiltro] = useState('');
+  const [ubicacionDisplay, setUbicacionDisplay] = useState('');
+
+  useEffect(() => {
+    let newUrl =
+      'https://api.mercadolibre.com/sites/MLA/search?category=MLA1404&units_per_pack=[1-1]&SALE_FORMAT=1359391&UNIT_VOLUME=(*-1L)';
+    newUrl += varietalFiltro + tipoFiltro + bodegaFiltro + ubicacionFiltro;
+    setUrl(newUrl);
+  }, [varietalFiltro, tipoFiltro, bodegaFiltro, ubicacionFiltro]);
 
   // Estados para los campos del formulario de contratación
   const [telefono, setTelefono] = useState('');
@@ -59,15 +93,6 @@ function ServiceExplorer() {
   const [mensaje, setMensaje] = useState('');
 
   const [selectedService, setSelectedService] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const servicesPerPage = 6;
-  const totalPages = Math.ceil(serviciosFiltrados.length / servicesPerPage);
-
-  const currentServices = serviciosFiltrados.slice(
-    (currentPage - 1) * servicesPerPage,
-    currentPage * servicesPerPage
-  );
 
   // Estado para controlar el diálogo de contratación
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -156,32 +181,24 @@ function ServiceExplorer() {
     resetFormContratacion();
   };
 
-  // Funcion de filtrado
-  const filtrarServicios = () => {
-    const filtrados = servicios.filter((servicio) => {
-      const cumpleFiltros =
-        /*         (!searchValue || servicio.nombre.includes(searchValue)) &&
-         */ (!varietalFiltro || servicio.varietal === varietalFiltro) &&
-        (!tipoFiltro || servicio.tipo === tipoFiltro) &&
-        (!bodegaFiltro || servicio.bodega === bodegaFiltro);
-      return conStock ? cumpleFiltros && servicio.enStock : cumpleFiltros;
-    });
-    setServiciosFiltrados(filtrados);
-  };
-
-  // Función para manejar el cambio del filtro de stock disponible
-  const handleStockChange = (event) => {
-    setConStock(event.target.checked);
-    filtrarServicios(); // Puedes llamar a filtrarServicios aquí si quieres aplicar el filtro inmediatamente
-  };
-
   // Funcion para limpiar filtros
   const limpiarFiltros = () => {
     setvarietalFiltro('');
     setTipoFiltro('');
     setBodegaFiltro('');
+    setUbicacionFiltro('');
+    setUbicacionDisplay('');
+    setvarietalDisplay('');
+    settipoDisplay('');
+    setBodegaDisplay('');
+    setCurrentPage(1);
     setServiciosFiltrados(servicios);
   };
+
+  if (!todo.available_filters) {
+    // Loading state, or return null, or a spinner etc.
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
@@ -192,128 +209,93 @@ function ServiceExplorer() {
               Explorar Vinos
             </Typography>
           </Grid>
-
-          <Grid item sm={3}>
-            <TextField
-              id="filled-basic"
-              label="Filled"
-              variant="filled"
-              className={classes.botonBuscar}
-            />
-            {/* <input
-              type="search"
-              placeholder="Buscar vinos..."
-              className={classes.title}
-              value={searchValue}
-              onChange={handleSearchChange}
-            /> */}
-          </Grid>
-          <Grid item sm={3}>
-            <Button className={classes.buscarButton} onClick={filtrarServicios}>
-              Buscar
-            </Button>
-          </Grid>
         </Grid>
 
         <Grid container spacing={2}>
           <Grid item xs={6} sm={6}>
             <DynamicSelect
               label="Varietal"
-              value={varietalFiltro}
-              onChange={(e) => setvarietalFiltro(e.target.value)}
+              value={varietalDisplay}
+              onChange={(e) => {
+                setvarietalDisplay(e.target.value);
+                setvarietalFiltro(`&VARIETAL=${e.target.value}`);
+                setCurrentPage(1);
+              }}
               className={classes.formControl}
-              options={[
-                { value: 'Malbec', label: 'Malbec' },
-                { value: 'Chardonnay', label: 'Chardonnay' },
-                { value: 'Malbec Rose', label: 'Malbec Rose' },
-                { value: 'Cabernet Sauvignon', label: 'Cabernet Sauvignon' },
-                { value: 'Merlot', label: 'Merlot' },
-                { value: 'Syrah', label: 'Syrah' },
-                { value: 'Pinot Noir', label: 'Pinot Noir' },
-                { value: 'Sauvignon Blanc', label: 'Sauvignon Blanc' },
-                { value: 'Tempranillo', label: 'Tempranillo' },
-                { value: 'Garnacha', label: 'Garnacha' },
-                { value: 'Viognier', label: 'Viognier' },
-              ]}
+              options={
+                todo.available_filters
+                  .find((filtro) => filtro.id === 'VARIETAL')
+                  ?.values.map((option) => ({
+                    value: option.id,
+                    label: option.name,
+                  })) || []
+              }
             />
           </Grid>
           <Grid item xs={6} sm={6}>
             <DynamicSelect
               label="Tipo"
-              value={tipoFiltro}
-              onChange={(e) => setTipoFiltro(e.target.value)}
+              value={tipoDisplay}
+              onChange={(e) => {
+                setTipoFiltro(`&WINE_VARIETY=${e.target.value}`);
+                settipoDisplay(e.target.value);
+                setCurrentPage(1);
+              }}
               className={classes.formControl}
-              options={[
-                { value: 'Semi-seco', label: 'Semi-seco' },
-                { value: 'Dulce', label: 'Dulce' },
-                { value: 'Seco', label: 'Seco' },
-              ]}
+              options={
+                todo.available_filters
+                  .find((filtro) => filtro.id === 'WINE_VARIETY')
+                  ?.values.map((option) => ({
+                    value: option.id,
+                    label: option.name,
+                  })) || []
+              }
             />
           </Grid>
           <Grid item xs={6} sm={6}>
             <DynamicSelect
               label="Bodega"
-              value={bodegaFiltro}
-              onChange={(e) => setBodegaFiltro(e.target.value)}
+              value={bodegaDisplay}
+              onChange={(e) => {
+                setBodegaFiltro(`&CELLAR=${e.target.value}`);
+                setBodegaDisplay(e.target.value);
+                setCurrentPage(1);
+              }}
               className={classes.formControl}
-              options={[
-                { value: 'Luigi Bosca', label: 'Luigi Bosca' },
-                { value: 'Fond de Cave', label: 'Fond de Cave' },
-                { value: 'Las Perdices', label: 'Las Perdices' },
-              ]}
+              options={
+                todo.available_filters
+                  .find((filtro) => filtro.id === 'CELLAR')
+                  ?.values.map((option) => ({
+                    value: option.id,
+                    label: option.name,
+                  })) || []
+              }
             />
           </Grid>
           <Grid item xs={6} sm={6}>
             <DynamicSelect
-              label="Maridaje"
-              value={bodegaFiltro}
-              onChange={(e) => setBodegaFiltro(e.target.value)}
-              className={classes.formControl}
-              options={[
-                { value: 'Luigi Bosca', label: 'Luigi Bosca' },
-                { value: 'Fond de Cave', label: 'Fond de Cave' },
-                { value: 'Las Perdices', label: 'Las Perdices' },
-              ]}
-            />
-          </Grid>
-          <Grid item xs={6} sm={6}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={conStock}
-                  onChange={handleStockChange}
-                  name="stockCheckbox"
-                  sx={{
-                    color: 'primary.main', // Usa el color principal del tema para el estado no marcado
-                    '&.Mui-checked': {
-                      color: 'primary.main', // Usa el color principal del tema para el estado marcado
-                      '&:after': {
-                        // Estilo para el checkmark en sí
-                        content: '""',
-                        position: 'absolute',
-                        backgroundColor: '#7A0C1A', // Aquí estableces el color del checkmark
-                        width: '16px',
-                        height: '16px',
-                        top: 'calc(50% - 8px)',
-                        left: 'calc(50% - 8px)',
-                      },
-                    },
-                  }}
-                />
-              }
-              label="Stock Disponible"
-              style={{
-                margin: '8px 0',
-                height: '56px', // Ajusta la altura para que coincida con el dropdown
-                display: 'flex',
-                alignItems: 'center', // Asegúrate de que el contenido esté centrado verticalmente
+              label="Ubicación"
+              value={ubicacionDisplay}
+              onChange={(e) => {
+                setUbicacionFiltro(`&state=${e.target.value}`);
+                setUbicacionDisplay(e.target.value);
+                setCurrentPage(1);
               }}
+              className={classes.formControl}
+              options={
+                todo.available_filters
+                  .find((filtro) => filtro.id === 'state')
+                  ?.values.map((option) => ({
+                    value: option.id,
+                    label: option.name,
+                  })) || []
+              }
             />
           </Grid>
         </Grid>
         <Grid container spacing={2}>
           <Grid item xs={1}>
-            <Button className={classes.rubyButton} onClick={filtrarServicios}>
+            <Button className={classes.rubyButton} onClick={null}>
               Filtrar
             </Button>
           </Grid>
@@ -329,14 +311,23 @@ function ServiceExplorer() {
         </Grid>
 
         <Grid container spacing={3}>
-          {currentServices.map((servicio) => (
-            <ServiceCard
-              key={servicio.id}
-              service={servicio}
-              onClick={setSelectedService}
-              onHire={handleHire}
-            />
-          ))}
+          {currentServices.length > 0 ? (
+            currentServices.map(
+              (servicio) =>
+                servicio.catalog_product_id && (
+                  <ServiceCard
+                    key={servicio.id}
+                    service={servicio}
+                    onClick={setSelectedService}
+                    onHire={handleHire}
+                  />
+                )
+            )
+          ) : (
+            <Typography variant="subtitle1" style={{ margin: '20px' }}>
+              No se han encontrado resultados.
+            </Typography>
+          )}
         </Grid>
 
         <div className={classes.pagination}>

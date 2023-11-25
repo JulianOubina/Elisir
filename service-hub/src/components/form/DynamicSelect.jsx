@@ -10,7 +10,18 @@ function DynamicSelect({ label, options, value, onChange, className }) {
     <Box sx={{ minWidth: 120 }}>
       <FormControl className={className} fullWidth>
         <InputLabel>{label}</InputLabel>
-        <Select value={value} onChange={onChange} label={label}>
+        <Select
+          value={value}
+          onChange={onChange}
+          label={label}
+          MenuProps={{
+            PaperProps: {
+              style: {
+                maxHeight: 300,
+              },
+            },
+          }}
+        >
           {options.map((option) => (
             <MenuItem key={option.value} value={option.value}>
               {option.label}

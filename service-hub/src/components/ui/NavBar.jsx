@@ -37,7 +37,7 @@ const pageRoutes = {
 };
 const homePage = { path: '/' };
 
-const settings = ['Perfil', 'Cambiar contraseña', 'Salir'];
+const settings = ['Mi Perfil', 'Cerrar Sesión'];
 
 function ResponsiveAppBar({ isAuthenticated, onLogout }) {
   const [providerInfo, setProviderInfo] = useState(null); // Variable de estado para la información del proveedor
@@ -244,19 +244,17 @@ function ResponsiveAppBar({ isAuthenticated, onLogout }) {
                 >
                   {settings.map((setting) => {
                     let toPath;
-                    if (setting === 'Salir') {
+                    if (setting === 'Cerrar Sesión') {
                       toPath = '/login';
-                    } else if (setting === 'Perfil') {
+                    } else if (setting === 'Mi Perfil') {
                       toPath = '/perfil-proveedor';
-                    } else if (setting === 'Cambiar contraseña') {
-                      toPath = '/change-password'; // Ajusta esta ruta a donde desees que lleve esta opción.
                     }
 
                     return (
                       <MenuItem
                         key={setting}
                         onClick={
-                          setting === 'Salir'
+                          setting === 'Cerrar Sesión'
                             ? handleLogoutClick
                             : handleCloseUserMenu
                         }

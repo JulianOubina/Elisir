@@ -24,8 +24,9 @@ import ClassIcon from '@mui/icons-material/Class';
 import useStyles from '../../styles/styles';
 
 function ServiceDetails({ service, resultados, onClose }) {
+  console.log(service);
+  console.log(resultados);
   const classes = useStyles();
-  const [detalles, setDetalles] = useState([]);
   // Filter comments for the selected service
   /*   const serviceComments = mockComments.filter(
     (comment) => comment.serviceName === service?.nombre
@@ -41,40 +42,45 @@ function ServiceDetails({ service, resultados, onClose }) {
 
   useEffect(() => {
     if (service) {
-      setDetalles(service.results[0].attributes);
-      if (detalles) {
-        const nombreAttribute = detalles.find((attr) => attr.id === 'BRAND');
+      if (service.results[0].attributes) {
+        const nombreAttribute = service.results[0].attributes.find(
+          (attr) => attr.id === 'BRAND'
+        );
         if (nombreAttribute) {
           setNombre(nombreAttribute.value_name);
         }
 
-        const bodegaAttribute = detalles.find((attr) => attr.id === 'CELLAR');
+        const bodegaAttribute = service.results[0].attributes.find(
+          (attr) => attr.id === 'CELLAR'
+        );
         if (bodegaAttribute) {
           setBodega(bodegaAttribute.value_name);
         }
 
-        const varietalAttribute = detalles.find(
+        const varietalAttribute = service.results[0].attributes.find(
           (attr) => attr.id === 'VARIETAL'
         );
         if (varietalAttribute) {
           setVarietal(varietalAttribute.value_name);
         }
 
-        const tipoAttribute = detalles.find(
+        const tipoAttribute = service.results[0].attributes.find(
           (attr) => attr.id === 'WINE_VARIETY'
         );
         if (tipoAttribute) {
           setTipo(tipoAttribute.value_name);
         }
 
-        const maridajeAttribute = detalles.find(
+        const maridajeAttribute = service.results[0].attributes.find(
           (attr) => attr.id === 'RECOMMENDED_USES'
         );
         if (maridajeAttribute) {
           setMaridaje(maridajeAttribute.value_name);
         }
 
-        const regionAttribute = detalles.find((attr) => attr.id === 'REGIONS');
+        const regionAttribute = service.results[0].attributes.find(
+          (attr) => attr.id === 'REGIONS'
+        );
         if (regionAttribute) {
           setRegion(regionAttribute.value_name);
         }
@@ -93,7 +99,7 @@ function ServiceDetails({ service, resultados, onClose }) {
         }
       }
     }
-  }, [service, detalles]); // This will only run when `service` changes.
+  }, [service]); // This will only run when `service` changes.
 
   return (
     <Dialog open={!!service} onClose={onClose} fullWidth maxWidth="md">

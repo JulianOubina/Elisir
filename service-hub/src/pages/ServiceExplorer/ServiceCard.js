@@ -75,7 +75,7 @@ function ServiceCard({ service, onClick }) {
         const response = await fetch(MELI_API_URL);
         const data = await response.json();
         setCaracteristicas(data);
-
+        console.log(data);
         if (data.results) {
           const brandAttribute = data.results[0].attributes.find(
             (attr) => attr.id === 'BRAND'
@@ -92,7 +92,7 @@ function ServiceCard({ service, onClick }) {
     fetchData();
   }, [service]);
 
-  if (!caracteristicas.results) {
+  if (!caracteristicas.results || !caracteristicas.results[0]) {
     // Loading state, or return null, or a spinner etc.
     return <div> </div>;
   }
