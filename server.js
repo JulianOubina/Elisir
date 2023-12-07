@@ -14,12 +14,15 @@ const cors = require('cors');
 
 let user = require('./models/user');
 
-
+app.use(cors({
+    origin: 'http://localhost:3000', // Your frontend's origin
+    credentials: true
+  }));
 passport.use(new LocalStrategy(user.authenticate()));
 passport.serializeUser(user.serializeUser());
 passport.deserializeUser(user.deserializeUser());
 
-app.use(cors());
+
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(require('express-session')({

@@ -63,7 +63,7 @@ router.post('/login', passport.authenticate('local', { failureFlash: true,failur
   });
 
 
-router.get('/',(req,res) => {
+router.get('/', (req,res) => {
     if (req.isAuthenticated()) {
         return res.json({user: req.user});
     } else {
