@@ -64,7 +64,6 @@ function MyServices() {
   const [errorMessage, setErrorMessage] = useState('');
 
   const userInfo = localStorage.getItem('userEmail');
-  console.log(userInfo);
 
   useEffect(() => {
     fetch('http://localhost:3030/favs/myWines', {
@@ -83,7 +82,6 @@ function MyServices() {
       })
       .then((misVinos) => {
         setServices(misVinos); // Set provider information with fetched data
-        console.log(misVinos);
       })
       .catch((error) => {
         console.error('Error:', error);

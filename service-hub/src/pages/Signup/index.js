@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Button,
   Container,
@@ -35,6 +36,7 @@ const useStyles = makeStyles((theme) => ({
 
 function SignUpPage() {
   const classes = useStyles();
+  const navigate = useNavigate();
 
   // Estados para los campos del formulario
   const [nombre, setname] = useState('');
@@ -88,6 +90,7 @@ function SignUpPage() {
       .catch((error) => {
         console.error('Error:', error);
       });
+    navigate('/login');
   };
 
   return (

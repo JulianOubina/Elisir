@@ -27,6 +27,7 @@ function App() {
       method: 'GET',
       credentials: 'include',
     });
+    localStorage.removeItem('userEmail');
     setIsAuthenticated(false);
   };
 

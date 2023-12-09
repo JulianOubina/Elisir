@@ -57,13 +57,11 @@ function ProviderProfile() {
       })
       .then((user) => {
         setProviderInfo(user); // Set provider information with fetched data
-        console.log(providerInfo);
-        console.log(user);
       })
       .catch((error) => {
         console.error('Error:', error);
       });
-  }, [providerInfo]);
+  }, []);
 
   const [meli, setmeli] = useState(false);
   const [updatedProvider, setUpdatedProvider] = useState({});

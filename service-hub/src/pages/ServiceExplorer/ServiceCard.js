@@ -30,9 +30,7 @@ function ServiceCard({ service, onClick }) {
   const [openCommentForm, setOpenCommentForm] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
 
-  const userInfo = localStorage.getItem('userEmail');
-  console.log(userInfo);
-
+  const [userInfo, setUserInfo] = useState();
   const handleCommentClick = () => {
     setOpenCommentForm(true);
   };
@@ -129,12 +127,11 @@ function ServiceCard({ service, onClick }) {
         console.error('Could not fetch data from MercadoLibre API', error);
       }
     };
-
     fetchData();
   }, [service]);
 
   useEffect(() => {
-    console.log(caracteristicas);
+    setUserInfo(localStorage.getItem('userEmail'));
     if (caracteristicas.results) {
       if (caracteristicas.results[0].attributes) {
         const nombreAttribute = caracteristicas.results[0].attributes.find(
@@ -228,9 +225,11 @@ function ServiceCard({ service, onClick }) {
           <Button size="small" onClick={handleCommentClick}>
             Comentar
           </Button>
-          <Button size="small" onClick={handleAddToFavorites}>
-            {isFavorite ? <StarIcon color="secondary" /> : <StarBorderIcon />}
-          </Button>
+          {userInfo !== 'undefined' && (
+            <Button size="small" onClick={handleAddToFavorites}>
+              {isFavorite ? <StarIcon color="secondary" /> : <StarBorderIcon />}
+            </Button>
+          )}
         </CardActions>
 
         <Dialog open={openCommentForm} onClose={handleCloseCommentForm}>

@@ -27,8 +27,6 @@ import ClassIcon from '@mui/icons-material/Class';
 import useStyles from '../../styles/styles';
 
 function ServiceDetails({ service, resultados, onClose }) {
-  console.log(service);
-  console.log(resultados);
   const classes = useStyles();
   // Filter comments for the selected service
   /*   const serviceComments = mockComments.filter(

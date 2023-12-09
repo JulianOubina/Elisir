@@ -37,7 +37,6 @@ function LoginPage({ onLogin }) {
     };
 
     // Envio los datos al backend
-    console.log(JSON.stringify(userData));
     // Por ejemplo, usando fetch para una solicitud POST:
     fetch('http://localhost:3030/user/login', {
       method: 'POST',

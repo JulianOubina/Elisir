@@ -52,7 +52,6 @@ function ServiceCard({ service, onClick, onRemoveFromFavorites }) {
 
   const [isFavorite, setIsFavorite] = useState(true); // Estado local para rastrear si es favorito
   const userInfo = localStorage.getItem('userEmail');
-  console.log(userInfo);
 
   // Función para manejar el cambio de estado de favoritos
   const handleAddToFavorites = () => {
