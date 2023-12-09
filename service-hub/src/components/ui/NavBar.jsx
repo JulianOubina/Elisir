@@ -46,6 +46,7 @@ function ResponsiveAppBar({ isAuthenticated, onLogout }) {
       .then((response) => response.json())
       .then((user) => {
         setProviderInfo(user);
+        localStorage.setItem('userEmail', user.user.username);
       })
       .catch((error) => {
         console.error('Error:', error);

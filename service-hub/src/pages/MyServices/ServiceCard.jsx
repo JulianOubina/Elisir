@@ -18,10 +18,10 @@ import StarIcon from '@mui/icons-material/Star';
 import mockComments from '../../data/mockComments';
 import NotificationGreen from '../../components/ui/NotificationGreen';
 
-function ServiceCard({ service, onClick }) {
+function ServiceCard({ service, onClick, onRemoveFromFavorites }) {
   // Calculate average rating for the service
   const serviceComments = mockComments.filter(
-    (comment) => comment.serviceName === service.nombre
+    (comment) => comment.serviceName === service.name
   );
   const averageRating =
     serviceComments.reduce((acc, comment) => acc + comment.rating, 0) /
@@ -50,23 +50,38 @@ function ServiceCard({ service, onClick }) {
 
   const canSubmit = name && lastName && mainComment;
 
-  const [isFavorite, setIsFavorite] = useState(false); // Estado local para rastrear si es favorito
+  const [isFavorite, setIsFavorite] = useState(true); // Estado local para rastrear si es favorito
+  const userInfo = localStorage.getItem('userEmail');
+  console.log(userInfo);
 
   // Función para manejar el cambio de estado de favoritos
   const handleAddToFavorites = () => {
     const newFavoriteStatus = !isFavorite; // Cambiar el estado de favorito
-    setIsFavorite(newFavoriteStatus); // Actualizar el estado
+    const info = {
+      name: service.name,
+    };
 
-    // Aquí puedes agregar lógica adicional para persistir la actualización de favoritos,
-    // como una llamada a una API o actualizar el estado global de la aplicación.
+    fetch('http://localhost:3030/favs/delete', {
+      method: 'POST',
+      credentials: 'include', // Necessary to include cookies
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: userInfo, vino: info }),
+    }).catch((error) => {
+      console.error('Error:', error);
+    });
+
+    setIsFavorite(newFavoriteStatus);
+    onRemoveFromFavorites();
   };
 
   return (
     <Grid item xs={12} sm={6} md={4}>
       <Card>
         <CardContent>
-          <Typography variant="h6">{service.nombre}</Typography>
-          <Typography color="textSecondary">{service.bodega}</Typography>
+          <Typography variant="h6">{service.name}</Typography>
+          <Typography color="textSecondary">{service.cellar}</Typography>
           <Rating value={averageRating} readOnly precision={0.5} />
         </CardContent>
         <CardActions>

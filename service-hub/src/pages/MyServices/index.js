@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Container,
   Typography,
@@ -14,6 +14,7 @@ import {
   MenuItem,
   Grid,
   Pagination,
+  Box,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import ServiceCard from './ServiceCard';
@@ -61,6 +62,33 @@ function MyServices() {
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+
+  const userInfo = localStorage.getItem('userEmail');
+  console.log(userInfo);
+
+  useEffect(() => {
+    fetch('http://localhost:3030/favs/myWines', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: userInfo }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((misVinos) => {
+        setServices(misVinos); // Set provider information with fetched data
+        console.log(misVinos);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  }, []);
 
   // Estados para la paginación
   const [currentPage, setCurrentPage] = useState(1);
@@ -119,28 +147,47 @@ function MyServices() {
 
   const [selectedService, setSelectedService] = useState(null);
 
+  const handleRemoveFromFavorites = (serviceId) => {
+    console.log(serviceId);
+    console.log(services);
+    setServices(services.filter((service) => service.name !== serviceId));
+  };
+
   return (
     <Container className={classes.root}>
       <Typography variant="h4" gutterBottom>
         Mis Vinos
       </Typography>
-      <Grid container spacing={3}>
-        {currentServices.map((servicio) => (
-          <ServiceCard
-            key={servicio.id}
-            service={servicio}
-            onClick={setSelectedService}
-            onHire={handleHire}
-          />
-        ))}
-      </Grid>
-      <div className={classes.paginationContainer}>
-        <Pagination
-          count={totalPages}
-          page={currentPage}
-          onChange={(event, value) => setCurrentPage(value)}
-        />
-      </div>
+      {currentServices.length > 0 ? (
+        <>
+          <Grid container spacing={3}>
+            {currentServices.map((servicio) => (
+              <ServiceCard
+                key={servicio.name}
+                service={servicio}
+                onClick={setSelectedService}
+                onHire={handleHire}
+                onRemoveFromFavorites={() =>
+                  handleRemoveFromFavorites(servicio.name)
+                }
+              />
+            ))}
+          </Grid>
+          <div className={classes.paginationContainer}>
+            <Pagination
+              count={totalPages}
+              page={currentPage}
+              onChange={(event, value) => setCurrentPage(value)}
+            />
+          </div>
+        </>
+      ) : (
+        <Box display="flex" justifyContent="center" alignItems="center" p={3}>
+          <Typography variant="h6">
+            No existen vinos guardados como favoritos
+          </Typography>
+        </Box>
+      )}
       <ServiceDetails
         service={selectedService}
         onClose={() => setSelectedService(null)}

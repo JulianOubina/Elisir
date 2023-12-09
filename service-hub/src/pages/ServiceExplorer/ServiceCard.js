@@ -30,6 +30,9 @@ function ServiceCard({ service, onClick }) {
   const [openCommentForm, setOpenCommentForm] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
 
+  const userInfo = localStorage.getItem('userEmail');
+  console.log(userInfo);
+
   const handleCommentClick = () => {
     setOpenCommentForm(true);
   };
@@ -54,14 +57,53 @@ function ServiceCard({ service, onClick }) {
   const [isFavorite, setIsFavorite] = useState(false); // Estado local para rastrear si es favorito
   const [caracteristicas, setCaracteristicas] = useState({});
 
+  const [nombre, setNombre] = useState('');
+  const [bodega, setBodega] = useState('-');
+  const [varietal, setVarietal] = useState('-');
+  const [tipo, setTipo] = useState('-');
+  const [maridaje, setMaridaje] = useState('-');
+  const [region, setRegion] = useState('-');
+
   // Función para manejar el cambio de estado de favoritos
   const handleAddToFavorites = () => {
-    const newFavoriteStatus = !isFavorite; // Cambiar el estado de favorito
-    setIsFavorite(newFavoriteStatus); // Actualizar el estado
+    const newFavoriteStatus = !isFavorite;
+    const info = {
+      name: nombre,
+      cellar: bodega,
+      varietel: varietal,
+      type: tipo,
+      food: maridaje,
+      zone: region,
+    };
 
-    // Aquí puedes agregar lógica adicional para persistir la actualización de favoritos,
-    // como una llamada a una API o actualizar el estado global de la aplicación.
+    if (isFavorite) {
+      fetch('http://localhost:3030/favs/delete', {
+        method: 'POST',
+        credentials: 'include', // Necessary to include cookies
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: userInfo, vino: info }),
+      }).catch((error) => {
+        console.error('Error:', error);
+      });
+      setIsFavorite(newFavoriteStatus);
+      return;
+    }
+
+    fetch('http://localhost:3030/favs', {
+      method: 'POST',
+      credentials: 'include', // Necessary to include cookies
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: userInfo, vino: info }),
+    }).catch((error) => {
+      console.error('Error:', error);
+    });
+    setIsFavorite(newFavoriteStatus);
   };
+
   // Fetch data from MercadoLibre API
   const MELI_API_URL =
     // eslint-disable-next-line prefer-template
@@ -75,7 +117,6 @@ function ServiceCard({ service, onClick }) {
         const response = await fetch(MELI_API_URL);
         const data = await response.json();
         setCaracteristicas(data);
-        console.log(data);
         if (data.results) {
           const brandAttribute = data.results[0].attributes.find(
             (attr) => attr.id === 'BRAND'
@@ -91,6 +132,55 @@ function ServiceCard({ service, onClick }) {
 
     fetchData();
   }, [service]);
+
+  useEffect(() => {
+    console.log(caracteristicas);
+    if (caracteristicas.results) {
+      if (caracteristicas.results[0].attributes) {
+        const nombreAttribute = caracteristicas.results[0].attributes.find(
+          (attr) => attr.id === 'BRAND'
+        );
+        if (nombreAttribute) {
+          setNombre(nombreAttribute.value_name);
+        }
+
+        const bodegaAttribute = caracteristicas.results[0].attributes.find(
+          (attr) => attr.id === 'CELLAR'
+        );
+        if (bodegaAttribute) {
+          setBodega(bodegaAttribute.value_name);
+        }
+
+        const varietalAttribute = caracteristicas.results[0].attributes.find(
+          (attr) => attr.id === 'VARIETAL'
+        );
+        if (varietalAttribute) {
+          setVarietal(varietalAttribute.value_name);
+        }
+
+        const tipoAttribute = caracteristicas.results[0].attributes.find(
+          (attr) => attr.id === 'WINE_VARIETY'
+        );
+        if (tipoAttribute) {
+          setTipo(tipoAttribute.value_name);
+        }
+
+        const maridajeAttribute = caracteristicas.results[0].attributes.find(
+          (attr) => attr.id === 'RECOMMENDED_USES'
+        );
+        if (maridajeAttribute) {
+          setMaridaje(maridajeAttribute.value_name);
+        }
+
+        const regionAttribute = caracteristicas.results[0].attributes.find(
+          (attr) => attr.id === 'REGIONS'
+        );
+        if (regionAttribute) {
+          setRegion(regionAttribute.value_name);
+        }
+      }
+    }
+  }, [caracteristicas]);
 
   if (!caracteristicas.results || !caracteristicas.results[0]) {
     // Loading state, or return null, or a spinner etc.
