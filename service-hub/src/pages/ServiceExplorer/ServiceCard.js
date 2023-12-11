@@ -39,18 +39,39 @@ function ServiceCard({ service, onClick }) {
     setOpenCommentForm(false);
   };
 
+  const [name, setName] = useState('');
+  const [mainComment, setMainComment] = useState('');
+  const [secondComment, setSecondComment] = useState('');
+  const [brand, setBrand] = useState('-');
+  const [commentRating, setRating] = useState(5); // [1, 5]
+
   const handleSendComment = () => {
-    // Here, you can handle the submission of the comment, e.g., save it to a database.
+    const info = {
+      nombre: name,
+      vino: brand,
+      estrellas: commentRating,
+      titulo: mainComment,
+      texto: secondComment,
+    };
+
+    fetch('http://localhost:3030/opinions', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(info),
+    })
+      .then((response) => response.json())
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+
     setOpenCommentForm(false);
     setNotificationOpen(true);
   };
 
-  const [name, setName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [mainComment, setMainComment] = useState('');
-  const [brand, setBrand] = useState('-');
-
-  const canSubmit = name && lastName && mainComment;
+  const canSubmit = name && mainComment;
 
   const [isFavorite, setIsFavorite] = useState(false); // Estado local para rastrear si es favorito
   const [caracteristicas, setCaracteristicas] = useState({});
@@ -242,15 +263,12 @@ function ServiceCard({ service, onClick }) {
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
-            <TextField
-              margin="dense"
-              label="Apellido"
-              fullWidth
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-            />
             <Typography>Rating:</Typography>
-            <Rating name="comment-rating" />
+            <Rating
+              name="comment-rating"
+              value={commentRating}
+              onChange={(e) => setRating(Number(e.target.value))}
+            />
             <TextField
               margin="dense"
               label="Comentario Principal"
@@ -264,6 +282,8 @@ function ServiceCard({ service, onClick }) {
               fullWidth
               multiline
               rows={4}
+              value={secondComment}
+              onChange={(e) => setSecondComment(e.target.value)}
             />
           </DialogContent>
           <DialogActions>
