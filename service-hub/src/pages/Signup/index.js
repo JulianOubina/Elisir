@@ -75,8 +75,6 @@ function SignUpPage() {
       recomendaciones,
     };
 
-    // Envio los datos al backend
-    console.log(JSON.stringify(userData));
     // Por ejemplo, usando fetch para una solicitud POST:
     fetch('http://localhost:3030/user/register', {
       method: 'POST',
@@ -86,7 +84,6 @@ function SignUpPage() {
       body: JSON.stringify(userData),
     })
       .then((response) => response.json())
-      .then((data) => console.log(data))
       .catch((error) => {
         console.error('Error:', error);
       });

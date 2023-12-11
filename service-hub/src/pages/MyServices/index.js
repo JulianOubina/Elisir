@@ -18,8 +18,7 @@ import {
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import ServiceCard from './ServiceCard';
-import ServiceDetails from '../ServiceExplorer/ServiceDetails';
-import mockServices from '../../data/mockServices';
+import ServiceDetails from './ServiceDetails';
 import NotificationGreen from '../../components/ui/NotificationGreen';
 
 const useStyles = makeStyles((theme) => ({
@@ -48,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
 
 function MyServices() {
   const classes = useStyles();
-  const [services, setServices] = useState(mockServices);
+  const [services, setServices] = useState([]);
   const [currentService, setCurrentService] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -146,10 +145,13 @@ function MyServices() {
   const [selectedService, setSelectedService] = useState(null);
 
   const handleRemoveFromFavorites = (serviceId) => {
-    console.log(serviceId);
-    console.log(services);
     setServices(services.filter((service) => service.name !== serviceId));
   };
+
+  if (!services) {
+    // Loading state, or return null, or a spinner etc.
+    return <div>Loading...</div>;
+  }
 
   return (
     <Container className={classes.root}>

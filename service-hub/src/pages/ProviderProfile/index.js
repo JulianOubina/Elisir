@@ -46,6 +46,9 @@ const useStyles = makeStyles((theme) => ({
 
 function ProviderProfile() {
   const classes = useStyles();
+  const [meli, setmeli] = useState(false);
+  const [notificationOpen, setNotificationOpen] = useState(false);
+
   const [providerInfo, setProviderInfo] = useState({});
   useEffect(() => {
     fetch('http://localhost:3030/user', { credentials: 'include' })
@@ -61,9 +64,8 @@ function ProviderProfile() {
       .catch((error) => {
         console.error('Error:', error);
       });
-  }, []);
+  }, [notificationOpen]);
 
-  const [meli, setmeli] = useState(false);
   const [updatedProvider, setUpdatedProvider] = useState({});
 
   const handleInputChange = (event) => {
@@ -71,10 +73,7 @@ function ProviderProfile() {
     setUpdatedProvider((prev) => ({ ...prev, [name]: value }));
   };
 
-  const [notificationOpen, setNotificationOpen] = useState(false);
-
   const handleSave = () => {
-    console.log(updatedProvider);
     fetch('http://localhost:3030/user/meli', {
       method: 'POST',
       credentials: 'include', // Necessary to include cookies

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Container, Typography, Grid, Pagination } from '@mui/material';
-
+// import { useNavigate } from 'react-router-dom';
 import DynamicSelect from '../../components/form/DynamicSelect';
 import ServiceCard from './ServiceCard';
 import ServiceDetails from './ServiceDetails';
@@ -11,11 +11,14 @@ import ContratacionForm from './ContratacionForm';
 
 function ServiceExplorer() {
   const classes = useStyles();
+  // const navigate = useNavigate();
+  const [allComments, setAllComments] = useState([]);
 
   const servicesPerPage = 9;
   const [currentServices, setCurrentServices] = useState();
   const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
+  const [fetchFlag, setFetchFlag] = useState(false);
 
   // Estados lista de servicios y filtrada
   const [servicios, setServicios] = useState([]);
@@ -54,7 +57,15 @@ function ServiceExplorer() {
     };
 
     fetchData();
-  }, [url]);
+
+    fetch('http://localhost:3030/opinions/allComments', {
+      method: 'POST',
+    })
+      .then((response) => response.json())
+      .then((recibedAllComments) => {
+        setAllComments(recibedAllComments);
+      });
+  }, [url, fetchFlag]);
 
   useEffect(() => {
     setTotalPages(Math.ceil(serviciosFiltrados.length / servicesPerPage));
@@ -64,7 +75,7 @@ function ServiceExplorer() {
         currentPage * servicesPerPage
       )
     );
-  }, [serviciosFiltrados, currentPage]);
+  }, [serviciosFiltrados, currentPage, fetchFlag]);
 
   // Estados para los filtros
   const [varietalFiltro, setvarietalFiltro] = useState('');
@@ -195,6 +206,12 @@ function ServiceExplorer() {
     setServiciosFiltrados(servicios);
   };
 
+  const changeFetchFlag = () => {
+    setTimeout(() => {
+      setFetchFlag((prev) => !prev);
+    }, 1000);
+  };
+
   if (!todo.available_filters) {
     // Loading state, or return null, or a spinner etc.
     return <div>Loading...</div>;
@@ -320,6 +337,8 @@ function ServiceExplorer() {
                     service={servicio}
                     onClick={setSelectedService}
                     onHire={handleHire}
+                    allComments={allComments}
+                    changeFetchFlag={changeFetchFlag}
                   />
                 )
             )
@@ -341,6 +360,7 @@ function ServiceExplorer() {
         <ServiceDetails
           service={selectedService}
           resultados={serviciosFiltrados}
+          comments={allComments}
           onClose={() => setSelectedService(null)}
           onHire={handleHire}
         />

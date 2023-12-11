@@ -15,17 +15,25 @@ import {
 } from '@mui/material';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarIcon from '@mui/icons-material/Star';
-import mockComments from '../../data/mockComments';
 import NotificationGreen from '../../components/ui/NotificationGreen';
 
-function ServiceCard({ service, onClick }) {
-  // Calculate average rating for the service
-  const serviceComments = mockComments.filter(
-    (comment) => comment.serviceName === service.nombre
-  );
-  const averageRating =
-    serviceComments.reduce((acc, comment) => acc + comment.rating, 0) /
-    serviceComments.length;
+function ServiceCard({ service, onClick, allComments, changeFetchFlag }) {
+  const [serviceComments, setServiceComments] = useState([]);
+  const [averageRating, setAverageRating] = useState([]);
+  const [caracteristicas, setCaracteristicas] = useState({});
+  const [fetchFlag, setFetchFlag] = useState(false);
+
+  useEffect(() => {
+    setServiceComments(
+      allComments.filter(
+        (comment) => comment.vino === service.attributes[0].value_name
+      )
+    );
+    setAverageRating(
+      serviceComments.reduce((acc, comment) => acc + comment.estrellas, 0) /
+        serviceComments.length
+    );
+  }, [caracteristicas]);
 
   const [openCommentForm, setOpenCommentForm] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
@@ -69,13 +77,13 @@ function ServiceCard({ service, onClick }) {
 
     setOpenCommentForm(false);
     setNotificationOpen(true);
+    changeFetchFlag();
+    setFetchFlag((prev) => !prev);
   };
 
   const canSubmit = name && mainComment;
 
   const [isFavorite, setIsFavorite] = useState(false); // Estado local para rastrear si es favorito
-  const [caracteristicas, setCaracteristicas] = useState({});
-
   const [nombre, setNombre] = useState('');
   const [bodega, setBodega] = useState('-');
   const [varietal, setVarietal] = useState('-');
@@ -149,7 +157,7 @@ function ServiceCard({ service, onClick }) {
       }
     };
     fetchData();
-  }, [service]);
+  }, [service, fetchFlag]);
 
   useEffect(() => {
     setUserInfo(localStorage.getItem('userEmail'));

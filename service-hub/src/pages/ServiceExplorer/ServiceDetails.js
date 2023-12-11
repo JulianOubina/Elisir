@@ -6,18 +6,17 @@ import {
   ListItemIcon,
   ListItemText,
   Divider,
-  // Card,
-  // CardContent,
+  Card,
+  CardContent,
   DialogTitle,
   DialogContent,
   DialogActions,
-  // Typography,
+  Typography,
   Button,
-  // Rating,
+  Rating,
 } from '@mui/material';
 import StoreIcon from '@mui/icons-material/Store';
 import InventoryIcon from '@mui/icons-material/Inventory';
-import PlaceIcon from '@mui/icons-material/Place';
 import PublicIcon from '@mui/icons-material/Public';
 import WineBarIcon from '@mui/icons-material/WineBar';
 import DinnerDiningIcon from '@mui/icons-material/DinnerDining';
@@ -26,12 +25,8 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import ClassIcon from '@mui/icons-material/Class';
 import useStyles from '../../styles/styles';
 
-function ServiceDetails({ service, resultados, onClose }) {
+function ServiceDetails({ service, resultados, onClose, comments }) {
   const classes = useStyles();
-  // Filter comments for the selected service
-  /*   const serviceComments = mockComments.filter(
-    (comment) => comment.serviceName === service?.nombre
-    ); */
 
   const [nombre, setNombre] = useState('');
   const [bodega, setBodega] = useState('-');
@@ -40,11 +35,22 @@ function ServiceDetails({ service, resultados, onClose }) {
   const [maridaje, setMaridaje] = useState('-');
   const [region, setRegion] = useState('-');
   const [precio, setPrecio] = useState('-');
-  const [ciudad, setCiudad] = useState('-');
-  const [barrio, setBarrio] = useState('-');
   const [vendedor, setVendedor] = useState('-');
   const [link, setLink] = useState('-');
   const [stock, setStock] = useState('Sin Stock');
+
+  const [serviceComments, setServiceComments] = useState([]);
+
+  useEffect(() => {
+    if (service) {
+      setServiceComments(
+        comments.filter(
+          (comment) =>
+            comment.vino === service.results[0].attributes[1].value_name
+        )
+      );
+    }
+  }, [service]);
 
   useEffect(() => {
     if (service) {
@@ -94,8 +100,6 @@ function ServiceDetails({ service, resultados, onClose }) {
         const precioAttribute = resultados.find(
           (result) => result.catalog_product_id === service.keywords
         );
-        setCiudad(precioAttribute.address.state_name);
-        setBarrio(precioAttribute.address.city_name);
         setVendedor(precioAttribute.seller.nickname);
         setLink(precioAttribute.permalink);
         if (precioAttribute.available_quantity > 0) {
@@ -138,16 +142,6 @@ function ServiceDetails({ service, resultados, onClose }) {
               <InventoryIcon />
             </ListItemIcon>
             <ListItemText primary="Stock" secondary={stock} />
-          </ListItem>
-          <Divider variant="inset" component="li" />
-          <ListItem>
-            <ListItemIcon>
-              <PlaceIcon />
-            </ListItemIcon>
-            <ListItemText
-              primary="Ubicacion"
-              secondary={`${ciudad} - ${barrio}`}
-            />
           </ListItem>
           <Divider variant="inset" component="li" />
           <ListItem>
@@ -195,19 +189,16 @@ function ServiceDetails({ service, resultados, onClose }) {
 
         <Divider className={classes.commentCard} />
 
-        {/* Display user comments and their ratings */}
-        {/*         {serviceComments.map((comment) => (
-          <Card key={comment.id} className={classes.commentCard}>
+        {serviceComments.map((comment) => (
+          <Card key={comment.nombre} className={classes.commentCard}>
             <CardContent>
-              <Typography variant="h6">{comment.user}</Typography>
-              <Rating value={comment.rating} readOnly />
-              <Typography variant="body1">{comment.comment}</Typography>
-              <Typography variant="body2">
-                {comment.secondaryComment}
-              </Typography>
+              <Typography variant="h6">{comment.nombre}</Typography>
+              <Rating value={comment.estrellas} readOnly />
+              <Typography variant="body1">{comment.titulo}</Typography>
+              <Typography variant="body2">{comment.texto}</Typography>
             </CardContent>
           </Card>
-        ))} */}
+        ))}
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="primary">

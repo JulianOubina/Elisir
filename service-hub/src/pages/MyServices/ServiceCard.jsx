@@ -15,24 +15,11 @@ import {
 } from '@mui/material';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarIcon from '@mui/icons-material/Star';
-import mockComments from '../../data/mockComments';
 import NotificationGreen from '../../components/ui/NotificationGreen';
 
 function ServiceCard({ service, onClick, onRemoveFromFavorites }) {
-  // Calculate average rating for the service
-  const serviceComments = mockComments.filter(
-    (comment) => comment.serviceName === service.name
-  );
-  const averageRating =
-    serviceComments.reduce((acc, comment) => acc + comment.rating, 0) /
-    serviceComments.length;
-
   const [openCommentForm, setOpenCommentForm] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
-
-  const handleCommentClick = () => {
-    setOpenCommentForm(true);
-  };
 
   const handleCloseCommentForm = () => {
     setOpenCommentForm(false);
@@ -81,14 +68,10 @@ function ServiceCard({ service, onClick, onRemoveFromFavorites }) {
         <CardContent>
           <Typography variant="h6">{service.name}</Typography>
           <Typography color="textSecondary">{service.cellar}</Typography>
-          <Rating value={averageRating} readOnly precision={0.5} />
         </CardContent>
         <CardActions>
           <Button size="small" color="primary" onClick={() => onClick(service)}>
             Ver más
-          </Button>
-          <Button size="small" onClick={handleCommentClick}>
-            Comentar
           </Button>
           <Button size="small" onClick={handleAddToFavorites}>
             {isFavorite ? <StarIcon color="secondary" /> : <StarBorderIcon />}
