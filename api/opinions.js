@@ -22,22 +22,9 @@ router.post('/', async (req, res)=>{
     )
 })
 
-router.get('/',async (req,res)=>{
-
-    let {vino} = req.body;
-    if(vino == ""){
-        return res.json({
-            status:'failed',
-            message:'inputs vacios'
-        
-        })
-    }
-    vino = vino.trim();
-    query = await Opinion.find({vino:vino})
+router.post('/allComments',async (req,res)=>{
+    query = await Opinion.find()
     res.json(query)
-
-
-
 })
 
 
